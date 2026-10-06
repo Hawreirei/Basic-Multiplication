@@ -39,7 +39,7 @@
   .opt:hover{background:#ffffff2e}
   .opt.sel{background:var(--gold);color:#241a00;border-color:#fff}
   .opt.sel small{color:#4a3a00}
-  .names{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .names{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
   .names label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);text-align:left}
   .names input{padding:10px 12px;border-radius:12px;border:2px solid var(--c);background:#00000040;color:var(--text);font:inherit;font-size:17px;width:100%}
   .big{margin-top:clamp(14px,3vh,26px);padding:clamp(12px,2vh,18px) clamp(28px,6vw,60px);border-radius:60px;
@@ -124,6 +124,35 @@
   .big.alt{background:#ffffff2a;box-shadow:0 8px 0 #0006;font-size:clamp(16px,2.6vh,22px)}
   #confetti{position:fixed;inset:0;z-index:30;pointer-events:none}
 
+  /* characters & abilities */
+  .chars{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+  .ch{width:46px;height:46px;border-radius:14px;background:#ffffff1a;border:2px solid transparent;font-size:26px;line-height:1;transition:.15s}
+  .ch:hover{background:#ffffff33}
+  .ch.sel{background:var(--c);border-color:#fff;transform:scale(1.1)}
+  .ch:disabled{opacity:.25;cursor:not-allowed}
+  .ch-desc{font-size:12px;color:var(--text);margin-top:6px;min-height:3.2em;text-align:center}
+  .ch-desc b{color:var(--c)}
+  .pcard{background:#0000002e;border-radius:16px;padding:10px;--c:#fff}
+  .pcard input{margin-bottom:2px}
+  .abil{position:relative;margin-top:4px;border-radius:14px;background:#00000055;overflow:hidden;min-height:clamp(28px,5vh,44px);
+    font-weight:800;font-size:clamp(11px,2vh,16px);border:2px solid #ffffff33;width:100%}
+  .abil .fill{position:absolute;inset:0 auto 0 0;width:0;background:color-mix(in srgb,var(--c) 55%,transparent);transition:width .3s}
+  .abil .lt{position:relative;display:block;padding:4px 8px;text-shadow:0 1px 3px #000}
+  .abil.ready{border-color:#fff;animation:glow2 .7s infinite alternate}
+  .abil.ready .fill{background:var(--c)}
+  .abil.ready .lt{color:#111;text-shadow:none}
+  .badges{position:absolute;right:6px;bottom:6px;display:flex;gap:4px;z-index:3;font-size:clamp(10px,1.8vh,14px);font-weight:800}
+  .badges span{background:#000a;border-radius:10px;padding:1px 7px}
+  .status{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;flex-direction:column;
+    font-weight:900;font-size:clamp(22px,5vh,48px);text-shadow:0 3px 8px #000;pointer-events:none;text-align:center}
+  .panel.frozen .status{display:flex;background:#6fd3ff77;backdrop-filter:blur(3px)}
+  .panel.frozen .ans{pointer-events:none}
+  .qbox.fog .qtxt{filter:blur(14px)}
+  .ans.dis{opacity:.15;pointer-events:none}
+  .banner{position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:15;background:#000c;border:2px solid var(--gold);
+    border-radius:20px;padding:8px 20px;font-weight:900;font-size:clamp(14px,2.6vh,22px);animation:floatban 1.8s forwards;pointer-events:none;white-space:nowrap}
+  @keyframes glow2{to{box-shadow:0 0 18px var(--c)}}
+  @keyframes floatban{0%{opacity:0;transform:translate(-50%,10px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
   @keyframes pulse{to{filter:brightness(1.5)}}
   @keyframes bump{50%{transform:scale(1.35)}}
   @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
@@ -142,13 +171,13 @@
 <section id="setup" class="screen on">
   <div class="setup-card">
     <h1>🚀 Times Table <span>Rocket Race</span></h1>
-    <p class="tag">Answer fast. Fuel your rocket. Beat the clock (and your friends)!</p>
-    <p class="goal"><b>Goal:</b> pick the right answer to each multiplication (1×1 to 12×12). Right answers launch your rocket higher — keep a streak for a bonus multiplier!</p>
+    <p class="tag">Answer fast, charge your hero's power, and use it to win the race!</p>
+    <p class="goal"><b>Goal:</b> pick the right answer to each multiplication (1×1 to 12×12). Right answers launch your rocket higher — keep a streak for a bonus multiplier! Every 5 right answers charges your <b>hero power</b> — use it to boost yourself or slow down the leader.</p>
 
     <div class="lbl">How many players?</div>
     <div class="row" id="pcount"></div>
 
-    <div class="lbl">Names</div>
+    <div class="lbl">Pick your character</div>
     <div class="names" id="names"></div>
 
     <div class="lbl">Round length</div>
@@ -193,6 +222,17 @@ const KEYSETS = [["1","2","3","4"],["7","8","9","0"],["z","x","c","v"],["b","n",
 const ROCKETS = ["🚀","🛸","🛰️","☄️"];
 const LENGTHS = [30,60,90];
 const MAX_F = 12;
+const ABIL_KEYS = ["5","-","a","."];
+const CHARGE_NEED = 5; // correct answers needed to charge the ability (golden counts double)
+// kind: "self" helps you, "attack" hits the leading opponent (needs 2+ players)
+const CHARS = [
+  {id:"turbo", icon:"🤖", name:"Turbo Bot",  ab:"TURBO",  kind:"self",   desc:"Your next 5 correct answers score DOUBLE."},
+  {id:"owl",   icon:"🦉", name:"Wise Owl",   ab:"HINT",   kind:"self",   desc:"Removes 2 wrong answers for your next 4 questions."},
+  {id:"shield",icon:"🛡️", name:"Guardian",   ab:"SHIELD", kind:"self",   desc:"Blocks the next attack aimed at you, or saves your streak after your next mistake."},
+  {id:"ice",   icon:"🧙", name:"Ice Wizard", ab:"FREEZE", kind:"attack", desc:"Freezes the leading opponent for 3 seconds."},
+  {id:"alien", icon:"👽", name:"Fog Alien",  ab:"FOG",    kind:"attack", desc:"Blurs the leading opponent's question for 3 seconds."},
+  {id:"thief", icon:"🦹", name:"Sneaky Thief",ab:"STEAL", kind:"attack", desc:"Steals up to 40 points from the leading opponent."}
+];
 
 const $ = id => document.getElementById(id);
 const rnd = n => Math.floor(Math.random()*n);
@@ -203,7 +243,7 @@ const store = {
 };
 
 /* ====================== SETTINGS ====================== */
-const settings = Object.assign({players:2,length:60,sound:true,names:["Player 1","Player 2","Player 3","Player 4"]}, store.get("ttrr",{}));
+const settings = Object.assign({players:2,length:60,sound:true,names:["Player 1","Player 2","Player 3","Player 4"],chars:[0,3,1,5]}, store.get("ttrr",{}));
 const saveSettings = () => store.set("ttrr",settings);
 
 /* ====================== AUDIO ====================== */
@@ -249,13 +289,24 @@ function buildSetup(){
   }
   const nm=$("names"); nm.innerHTML="";
   for(let i=0;i<settings.players;i++){
-    const l=document.createElement("label"); l.style.setProperty("--c",COLORS[i]);
-    l.innerHTML=`<span>Player ${i+1}</span>`;
+    if(settings.players===1 && CHARS[settings.chars[i]].kind==="attack") settings.chars[i]=0;
+    const card=document.createElement("div"); card.className="pcard"; card.style.setProperty("--c",COLORS[i]);
     const inp=document.createElement("input"); inp.maxLength=12; inp.value=settings.names[i]; inp.setAttribute("aria-label","Player "+(i+1)+" name");
+    inp.style.setProperty("--c",COLORS[i]);
     inp.oninput=()=>{settings.names[i]=inp.value; saveSettings();};
     inp.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); inp.blur(); } e.stopPropagation(); };
-    l.appendChild(inp); nm.appendChild(l);
+    const row=document.createElement("div"); row.className="chars";
+    CHARS.forEach((c,ci)=>{
+      const b=document.createElement("button"); b.className="ch"+(settings.chars[i]===ci?" sel":""); b.textContent=c.icon; b.title=c.name;
+      b.setAttribute("aria-label",c.name); b.disabled=settings.players===1&&c.kind==="attack";
+      b.onclick=()=>{settings.chars[i]=ci;saveSettings();buildSetup();}; row.appendChild(b);
+    });
+    const ch=CHARS[settings.chars[i]], d=document.createElement("div"); d.className="ch-desc";
+    d.innerHTML=`<b>${ch.name}</b> — ${ch.kind==="attack"?"⚔ ":"✨ "}${ch.desc}`;
+    card.append(inp,row,d); nm.appendChild(card);
   }
+  if(settings.players===1){ const n=document.createElement("div"); n.className="keys-help"; n.style.gridColumn="1/-1";
+    n.textContent="Attack characters need an opponent — play with 2+ players to unlock them."; nm.appendChild(n); }
   const ln=$("lens"); ln.innerHTML="";
   for(const s of LENGTHS){
     const b=document.createElement("button"); b.className="opt"+(settings.length===s?" sel":"");
@@ -263,7 +314,7 @@ function buildSetup(){
     b.onclick=()=>{settings.length=s;saveSettings();buildSetup();}; ln.appendChild(b);
   }
   $("keyhelp").innerHTML = "Tap the answers, or use the keyboard — " +
-    Array.from({length:settings.players},(_,i)=>`<b style="color:${COLORS[i]}">P${i+1}: ${KEYSETS[i].join(" ").toUpperCase()}</b>`).join(" &nbsp;·&nbsp; ");
+    Array.from({length:settings.players},(_,i)=>`<b style="color:${COLORS[i]}">P${i+1}: ${KEYSETS[i].join(" ").toUpperCase()} · power ${ABIL_KEYS[i].toUpperCase()}</b>`).join(" &nbsp;·&nbsp; ");
 }
 
 /* ====================== GAME STATE ====================== */
@@ -274,7 +325,8 @@ function show(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.t
 function newPlayer(i){
   return { i, name:(settings.names[i]||"").trim()||("Player "+(i+1)), color:COLORS[i],
     score:0, correct:0, wrong:0, streak:0, best:0, timeSum:0, q:null, locked:false, qStart:0,
-    missed:[], seen:new Set(), hist:{}, last:"", el:{} };
+    missed:[], seen:new Set(), hist:{}, last:"", el:{},
+    ch:CHARS[settings.chars[i]]||CHARS[0], charge:0, used:0, fx:{turbo:0,hint:0,shield:false,freeze:0,fog:0} };
 }
 
 /* ====================== QUESTIONS ====================== */
@@ -312,16 +364,19 @@ function buildArena(){
     const d=document.createElement("div"); d.className="panel"; d.style.setProperty("--c",p.color);
     d.innerHTML=`
       <div class="phead"><div class="pname"></div><div class="pscore">0</div></div>
+      <button class="abil"><span class="fill"></span><span class="lt"></span></button>
       <div class="pstat"><span class="streak">Streak 0</span><span class="mult">×1</span></div>
       <div class="pbody">
         <div class="track"><div class="crown">👑</div><div class="rocket">${ROCKETS[p.i]}</div></div>
         <div class="qa">
           <div class="qbox"><span class="gtag">⭐ GOLDEN ×3</span><span class="qtxt"></span></div>
+          <div class="badges"></div>
           <div class="answers"></div>
           <div class="fb"></div>
         </div>
-      </div>`;
-    d.querySelector(".pname").textContent=p.name;
+      </div>
+      <div class="status"><div>🧊</div><div>FROZEN!</div></div>`;
+    d.querySelector(".pname").textContent=p.ch.icon+" "+p.name;
     const an=d.querySelector(".answers");
     for(let k=0;k<4;k++){
       const b=document.createElement("button"); b.className="ans";
@@ -331,7 +386,9 @@ function buildArena(){
     }
     p.el={panel:d,score:d.querySelector(".pscore"),streak:d.querySelector(".streak"),mult:d.querySelector(".mult"),
       rocket:d.querySelector(".rocket"),track:d.querySelector(".track"),qbox:d.querySelector(".qbox"),
-      qtxt:d.querySelector(".qtxt"),ans:[...an.children],fb:d.querySelector(".fb")};
+      qtxt:d.querySelector(".qtxt"),ans:[...an.children],fb:d.querySelector(".fb"),abil:d.querySelector(".abil"),fill:d.querySelector(".fill"),lt:d.querySelector(".lt"),badges:d.querySelector(".badges")};
+    p.el.abil.addEventListener("pointerdown",e=>{e.preventDefault(); activate(p);});
+    renderAbility(p);
     ar.appendChild(d);
   });
 }
@@ -346,6 +403,58 @@ function nextQuestion(p){
   e.qbox.className="qbox"+(q.golden?" golden":"");
   e.ans.forEach((b,k)=>{ b.className="ans"; b.querySelector(".v").textContent=q.opts[k]; });
   if(q.golden) goldenCooldown=Date.now()+4000;
+  e.qbox.classList.toggle("fog",p.fx.fog>0);
+  if(p.fx.hint>0){ applyHint(p); p.fx.hint--; renderAbility(p); }
+}
+
+function applyHint(p){
+  const wrong=p.q.opts.map((v,k)=>k).filter(k=>p.q.opts[k]!==p.q.ans); shuffle(wrong);
+  wrong.slice(0,2).forEach(k=>p.el.ans[k].classList.add("dis"));
+}
+
+function banner(txt,col){
+  const b=document.createElement("div"); b.className="banner"; b.textContent=txt; if(col) b.style.borderColor=col;
+  document.body.appendChild(b); setTimeout(()=>b.remove(),1800);
+}
+
+function renderAbility(p){
+  const e=p.el, f=p.fx, ready=p.charge>=CHARGE_NEED, usable=ready&&(p.ch.kind==="self"||players.length>1);
+  e.abil.classList.toggle("ready",usable);
+  e.fill.style.width=Math.min(100,100*p.charge/CHARGE_NEED)+"%";
+  e.lt.textContent=usable?`${p.ch.icon} ${p.ch.ab}! [${ABIL_KEYS[p.i].toUpperCase()}]`:`${p.ch.icon} ${p.ch.ab} · ${Math.min(p.charge,CHARGE_NEED)}/${CHARGE_NEED}`;
+  const bd=[]; if(f.turbo>0) bd.push("⚡×2 ("+f.turbo+")"); if(f.hint>0) bd.push("🦉"+f.hint); if(f.shield) bd.push("🛡️");
+  e.badges.innerHTML=bd.map(t=>`<span>${t}</span>`).join("");
+  e.panel.classList.toggle("frozen",f.freeze>0);
+  e.qbox.classList.toggle("fog",f.fog>0);
+}
+
+function target(p){
+  const others=players.filter(x=>x!==p), top=Math.max(...others.map(x=>x.score));
+  const best=others.filter(x=>x.score===top); return best[rnd(best.length)];
+}
+
+function activate(p){
+  if(phase!=="play"||paused||p.charge<CHARGE_NEED) return;
+  const c=p.ch, f=p.fx;
+  if(c.kind==="attack" && players.length<2) return;
+  p.charge=0; p.used++;
+  if(c.kind==="self"){
+    if(c.id==="turbo") f.turbo=5;
+    if(c.id==="owl"){ f.hint=3; if(p.q&&!p.locked) applyHint(p); }
+    if(c.id==="shield") f.shield=true;
+    sfx.gold(); banner(`${c.icon} ${p.name}: ${c.ab}!`,p.color);
+  } else {
+    const t=target(p);
+    if(t.fx.shield){ t.fx.shield=false; sfx.bad(); banner(`🛡️ ${t.name} BLOCKED ${p.name}'s ${c.ab}!`,t.color); renderAbility(t); }
+    else {
+      if(c.id==="ice") t.fx.freeze=3;
+      if(c.id==="alien") t.fx.fog=3;
+      if(c.id==="thief"){ const amt=Math.min(40,t.score); t.score-=amt; p.score+=amt; floatText(t,"-"+amt,"#ff5d73"); floatText(p,"+"+amt,"#ffd43b"); updatePanel(t,false); updatePanel(p,true); }
+      sfx.gold(); banner(`${c.icon} ${p.name} used ${c.ab} on ${t.name}!`,p.color);
+      renderAbility(t);
+    }
+  }
+  renderAbility(p);
 }
 
 function floatText(p,txt,color){
@@ -356,14 +465,16 @@ function floatText(p,txt,color){
 }
 
 function answer(p,k){
-  if(phase!=="play"||paused||p.locked||!p.q) return;
+  if(phase!=="play"||paused||p.locked||!p.q||p.fx.freeze>0) return;
   const q=p.q, e=p.el, picked=q.opts[k], t=(performance.now()-p.qStart)/1000;
   p.locked=true; e.panel.classList.add("lock");
   const h=p.hist[q.key]||(p.hist[q.key]={r:0,w:0}); p.seen.add(q.key);
   if(picked===q.ans){
     p.correct++; p.streak++; p.best=Math.max(p.best,p.streak); p.timeSum+=t; h.r++;
     const speed = t<2?5:t<4?2:0, m=multOf(p.streak);
-    const gain=(10+speed)*m*(q.golden?3:1);
+    let gain=(10+speed)*m*(q.golden?3:1);
+    if(p.fx.turbo>0){ gain*=2; p.fx.turbo--; }
+    p.charge=Math.min(CHARGE_NEED,p.charge+(q.golden?2:1));
     p.score+=gain;
     e.ans[k].classList.add("right"); e.qbox.classList.add("ok");
     e.fb.className="fb good";
@@ -371,16 +482,17 @@ function answer(p,k){
     floatText(p,"+"+gain,q.golden?"#ffd43b":"#3ddc84");
     q.golden?sfx.gold():sfx.good(p.streak);
     if(p.streak>0 && p.streak%5===0){ e.fb.textContent="🔥 "+p.streak+" in a row! ×"+m; }
-    updatePanel(p,true);
-    setTimeout(()=>{ if(phase==="play") nextQuestion(p); else if(phase==="play"||paused) {} },140);
+    updatePanel(p,true); renderAbility(p);
+    setTimeout(()=>{ if(phase==="play") nextQuestion(p); },140);
   } else {
-    p.wrong++; p.streak=0; h.w++;
+    p.wrong++; h.w++;
+    if(p.fx.shield){ p.fx.shield=false; banner(`🛡️ ${p.name}'s shield saved the streak!`,p.color); } else p.streak=0;
     if(!p.missed.some(x=>x[0]===q.a&&x[1]===q.b)) p.missed.push([q.a,q.b]);
     e.ans[k].classList.add("wrong");
     e.ans[q.opts.indexOf(q.ans)].classList.add("right");
     e.qbox.classList.remove("golden"); e.qbox.classList.add("no");
     e.fb.className="fb bad"; e.fb.textContent=`${q.a} × ${q.b} = ${q.ans}  — you'll get it next time!`;
-    sfx.bad(); updatePanel(p,false);
+    sfx.bad(); updatePanel(p,false); renderAbility(p);
     setTimeout(()=>{ if(phase==="play") nextQuestion(p); },900);
   }
 }
@@ -433,6 +545,7 @@ function tick(){
   const now=performance.now(), dt=(now-lastTick)/1000; lastTick=now;
   if(paused||phase!=="play") return;
   timeLeft=Math.max(0,timeLeft-dt); renderTimer();
+  players.forEach(p=>{ const f=p.fx; if(f.freeze>0||f.fog>0){ f.freeze=Math.max(0,f.freeze-dt); f.fog=Math.max(0,f.fog-dt); if(f.freeze===0||f.fog===0) renderAbility(p); } });
   const w=Math.ceil(timeLeft); if(w<=5&&w>0&&w!==lastWhole){ lastWhole=w; sfx.tick(); }
   if(timeLeft<=0) endGame();
 }
@@ -483,7 +596,7 @@ function buildResults(){
     const miss=[...new Set(Object.entries(p.hist).filter(([,h])=>h.w).map(([k])=>k.replace("x"," × ")))];
     c.innerHTML=`
       <div class="medal">${players.length>1?medals[rank]:"🏁"}</div>
-      <div class="rname"></div>
+      <div class="rname"></div><div style="font-size:13px;color:var(--muted)">${p.ch.name} · power used ${p.used}×</div>
       <div class="rscore">${p.score}</div>
       ${isBest?'<div class="newbest">⭐ NEW BEST!</div>':""}
       <div class="rtitle">${titleFor(p.score)}</div>
@@ -494,7 +607,7 @@ function buildResults(){
       <div class="grid">${grid}</div>
       <div class="gl">Facts you tried: 🟩 nailed · 🟨 tricky · 🟥 missed</div>
       <div class="practice">${miss.length?"Practice: <b>"+miss.slice(0,6).join(", ")+"</b>":"🎉 No mistakes — perfect!"}</div>`;
-    c.querySelector(".rname").textContent=p.name;
+    c.querySelector(".rname").textContent=p.ch.icon+" "+p.name;
     pod.appendChild(c);
   });
   const top=Math.max(...players.map(p=>p.score));
@@ -518,6 +631,7 @@ addEventListener("keydown",e=>{
   const k=e.key.toLowerCase();
   if(phase==="play"){
     if(k==="escape"){ setPaused(!paused); return; }
+    for(let i=0;i<players.length;i++){ if(k===ABIL_KEYS[i]){ e.preventDefault(); if(!e.repeat) activate(players[i]); return; } }
     for(let i=0;i<players.length;i++){ const idx=KEYSETS[i].indexOf(k); if(idx>-1){ e.preventDefault(); if(!e.repeat) answer(players[i],idx); return; } }
   } else if(phase==="results"){
     if(k==="enter"||k===" "){ e.preventDefault(); startGame(); }
