@@ -147,6 +147,7 @@
     font-weight:900;font-size:clamp(22px,5vh,48px);text-shadow:0 3px 8px #000;pointer-events:none;text-align:center}
   .panel.frozen .status{display:flex;background:#6fd3ff77;backdrop-filter:blur(3px)}
   .panel.frozen .ans{pointer-events:none}
+  .qbox.tri{font-size:clamp(20px,min(6vh,4.6vw),70px)}
   .qbox.fog .qtxt{filter:blur(14px)}
   .ans.dis{opacity:.15;pointer-events:none}
   .banner{position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:15;background:#000c;border:2px solid var(--gold);
@@ -172,7 +173,7 @@
   <div class="setup-card">
     <h1>🚀 Times Table <span>Rocket Race</span></h1>
     <p class="tag">Answer fast, charge your hero's power, and use it to win the race!</p>
-    <p class="goal"><b>Goal:</b> pick the right answer to each multiplication (1×1 to 12×12). Right answers launch your rocket higher — keep a streak for a bonus multiplier! Every 5 right answers charges your <b>hero power</b> — use it to boost yourself or slow down the leader.</p>
+    <p class="goal"><b>Goal:</b> pick the right answer to each multiplication (1×1 to 12×12). Some questions multiply three small numbers (like 2 × 3 × 4). Right answers launch your rocket higher — keep a streak for a bonus multiplier! Every 5 right answers charges your <b>hero power</b> — use it to boost yourself or slow down the leader.</p>
 
     <div class="lbl">How many players?</div>
     <div class="row" id="pcount"></div>
@@ -227,7 +228,7 @@ const CHARGE_NEED = 5; // correct answers needed to charge the ability (golden c
 // kind: "self" helps you, "attack" hits the leading opponent (needs 2+ players)
 const CHARS = [
   {id:"turbo", icon:"🤖", name:"Turbo Bot",  ab:"TURBO",  kind:"self",   desc:"Your next 5 correct answers score DOUBLE."},
-  {id:"owl",   icon:"🦉", name:"Wise Owl",   ab:"HINT",   kind:"self",   desc:"Removes 2 wrong answers for your next 4 questions."},
+  {id:"owl",   icon:"🦉", name:"Wise Owl",   ab:"EASY",   kind:"self",   desc:"Your next 4 questions are EASY (small numbers) — quick points!"},
   {id:"shield",icon:"🛡️", name:"Guardian",   ab:"SHIELD", kind:"self",   desc:"Blocks the next attack aimed at you, or saves your streak after your next mistake."},
   {id:"ice",   icon:"🧙", name:"Ice Wizard", ab:"FREEZE", kind:"attack", desc:"Freezes the leading opponent for 3 seconds."},
   {id:"alien", icon:"👽", name:"Fog Alien",  ab:"FOG",    kind:"attack", desc:"Blurs the leading opponent's question for 3 seconds."},
@@ -326,35 +327,41 @@ function newPlayer(i){
   return { i, name:(settings.names[i]||"").trim()||("Player "+(i+1)), color:COLORS[i],
     score:0, correct:0, wrong:0, streak:0, best:0, timeSum:0, q:null, locked:false, qStart:0,
     missed:[], seen:new Set(), hist:{}, last:"", el:{},
-    ch:CHARS[settings.chars[i]]||CHARS[0], charge:0, used:0, fx:{turbo:0,hint:0,shield:false,freeze:0,fog:0} };
+    ch:CHARS[settings.chars[i]]||CHARS[0], charge:0, used:0, fx:{turbo:0,easy:0,shield:false,freeze:0,fog:0} };
 }
 
 /* ====================== QUESTIONS ====================== */
 // Difficulty ramps gently: early questions use smaller factors, by ~20 correct all of 1..12 are in play.
 function makeQuestion(p){
-  const maxF = Math.min(MAX_F, 5 + Math.floor(p.correct/3));
-  let a,b,key,tries=0;
+  const easy=p.fx.easy>0;
+  const maxF = easy ? 5 : Math.min(MAX_F, 5 + Math.floor(p.correct/3));
+  let f,key,tries=0;
   do{
-    if(p.missed.length && Math.random()<.3){ [a,b]=p.missed.shift(); }
-    else { a=1+rnd(maxF); b=1+rnd(maxF);
-      if(maxF>=8 && Math.random()<.45){ if(Math.random()<.5) a=Math.max(a,6+rnd(7)); else b=Math.max(b,6+rnd(7)); }
-      if((a===1||b===1) && Math.random()<.7){ a=2+rnd(maxF-1>0?maxF-1:1); b=2+rnd(maxF-1>0?maxF-1:1); } }
-    a=Math.min(a,MAX_F); b=Math.min(b,MAX_F);
-    key=Math.min(a,b)+"x"+Math.max(a,b); tries++;
+    if(!easy && p.missed.length && Math.random()<.3){ f=p.missed.shift(); }
+    else if(!easy && p.correct>=6 && Math.random()<.15){
+      // three-number question: small factors only, product stays friendly
+      do{ f=[2+rnd(4),2+rnd(4),2+rnd(4)]; }while(f[0]*f[1]*f[2]>100);
+    } else {
+      let a=1+rnd(maxF), b=1+rnd(maxF);
+      if(!easy && maxF>=8 && Math.random()<.45){ if(Math.random()<.5) a=Math.max(a,6+rnd(7)); else b=Math.max(b,6+rnd(7)); }
+      if((a===1||b===1) && Math.random()<.7){ a=2+rnd(maxF-1>0?maxF-1:1); b=2+rnd(maxF-1>0?maxF-1:1); }
+      f=[Math.min(a,MAX_F),Math.min(b,MAX_F)];
+    }
+    key=[...f].sort((x,y)=>x-y).join("x"); tries++;
   } while(key===p.last && tries<10);
   p.last=key;
-  if(Math.random()<.5) [a,b]=[b,a];
-  const ans=a*b, set=new Set([ans]), cand=[];
-  [[a+1,b],[a-1,b],[a,b+1],[a,b-1],[a+2,b],[a,b+2]].forEach(([x,y])=>{ if(x>0&&y>0) cand.push(x*y); });
-  cand.push(ans+10,ans-10,ans+a,ans-b,ans+1,ans-1,ans+2,ans-2);
+  shuffle(f);
+  const ans=f.reduce((x,y)=>x*y,1), set=new Set([ans]), cand=[];
+  f.forEach((v,i)=>[1,-1,2].forEach(d=>{ if(v+d>0){ const g=[...f]; g[i]=v+d; cand.push(g.reduce((x,y)=>x*y,1)); } }));
+  cand.push(ans+10,ans-10,ans+f[0],ans-f[1],ans+1,ans-1,ans+2,ans-2);
   const ds=String(ans); if(ds.length===2) cand.push(+(ds[1]+ds[0]));
   shuffle(cand);
   const opts=[ans];
   for(const c of cand){ if(c>0 && !set.has(c) && opts.length<4){ set.add(c); opts.push(c); } }
   for(let k=1;opts.length<4;k++){ const c=ans+k*3; if(!set.has(c)){set.add(c);opts.push(c);} }
   shuffle(opts);
-  const golden = !p.firstGolden && p.streak>=3 && Date.now()>goldenCooldown && Math.random()<.18;
-  return {a,b,ans,opts,key,golden};
+  const golden = p.streak>=3 && Date.now()>goldenCooldown && Math.random()<.18;
+  return {f,txt:f.join(" × "),ans,opts,key,golden};
 }
 
 /* ====================== PANELS ====================== */
@@ -399,17 +406,12 @@ function nextQuestion(p){
   p.q=makeQuestion(p); p.locked=false; p.qStart=performance.now();
   const q=p.q, e=p.el;
   e.panel.classList.remove("lock");
-  e.qtxt.textContent=`${q.a} × ${q.b}`;
-  e.qbox.className="qbox"+(q.golden?" golden":"");
+  e.qtxt.textContent=q.txt;
+  e.qbox.className="qbox"+(q.golden?" golden":"")+(q.f.length>2?" tri":"")+(p.fx.fog>0?" fog":"");
   e.ans.forEach((b,k)=>{ b.className="ans"; b.querySelector(".v").textContent=q.opts[k]; });
   if(q.golden) goldenCooldown=Date.now()+4000;
   e.qbox.classList.toggle("fog",p.fx.fog>0);
-  if(p.fx.hint>0){ applyHint(p); p.fx.hint--; renderAbility(p); }
-}
-
-function applyHint(p){
-  const wrong=p.q.opts.map((v,k)=>k).filter(k=>p.q.opts[k]!==p.q.ans); shuffle(wrong);
-  wrong.slice(0,2).forEach(k=>p.el.ans[k].classList.add("dis"));
+  if(p.fx.easy>0){ p.fx.easy--; renderAbility(p); }
 }
 
 function banner(txt,col){
@@ -422,7 +424,7 @@ function renderAbility(p){
   e.abil.classList.toggle("ready",usable);
   e.fill.style.width=Math.min(100,100*p.charge/CHARGE_NEED)+"%";
   e.lt.textContent=usable?`${p.ch.icon} ${p.ch.ab}! [${ABIL_KEYS[p.i].toUpperCase()}]`:`${p.ch.icon} ${p.ch.ab} · ${Math.min(p.charge,CHARGE_NEED)}/${CHARGE_NEED}`;
-  const bd=[]; if(f.turbo>0) bd.push("⚡×2 ("+f.turbo+")"); if(f.hint>0) bd.push("🦉"+f.hint); if(f.shield) bd.push("🛡️");
+  const bd=[]; if(f.turbo>0) bd.push("⚡×2 ("+f.turbo+")"); if(f.easy>0) bd.push("🦉 easy "+f.easy); if(f.shield) bd.push("🛡️");
   e.badges.innerHTML=bd.map(t=>`<span>${t}</span>`).join("");
   e.panel.classList.toggle("frozen",f.freeze>0);
   e.qbox.classList.toggle("fog",f.fog>0);
@@ -440,7 +442,7 @@ function activate(p){
   p.charge=0; p.used++;
   if(c.kind==="self"){
     if(c.id==="turbo") f.turbo=5;
-    if(c.id==="owl"){ f.hint=3; if(p.q&&!p.locked) applyHint(p); }
+    if(c.id==="owl"){ f.easy=4; if(p.q&&!p.locked) nextQuestion(p); }
     if(c.id==="shield") f.shield=true;
     sfx.gold(); banner(`${c.icon} ${p.name}: ${c.ab}!`,p.color);
   } else {
@@ -487,11 +489,11 @@ function answer(p,k){
   } else {
     p.wrong++; h.w++;
     if(p.fx.shield){ p.fx.shield=false; banner(`🛡️ ${p.name}'s shield saved the streak!`,p.color); } else p.streak=0;
-    if(!p.missed.some(x=>x[0]===q.a&&x[1]===q.b)) p.missed.push([q.a,q.b]);
+    if(!p.missed.some(x=>[...x].sort().join()===[...q.f].sort().join())) p.missed.push([...q.f]);
     e.ans[k].classList.add("wrong");
     e.ans[q.opts.indexOf(q.ans)].classList.add("right");
     e.qbox.classList.remove("golden"); e.qbox.classList.add("no");
-    e.fb.className="fb bad"; e.fb.textContent=`${q.a} × ${q.b} = ${q.ans}  — you'll get it next time!`;
+    e.fb.className="fb bad"; e.fb.textContent=`${q.txt} = ${q.ans}  — you'll get it next time!`;
     sfx.bad(); updatePanel(p,false); renderAbility(p);
     setTimeout(()=>{ if(phase==="play") nextQuestion(p); },900);
   }
@@ -593,7 +595,7 @@ function buildResults(){
       const h=p.hist[Math.min(a,b)+"x"+Math.max(a,b)];
       grid+=`<i class="${!h?"":h.w&&!h.r?"r":h.w?"y":"g"}"></i>`;
     }
-    const miss=[...new Set(Object.entries(p.hist).filter(([,h])=>h.w).map(([k])=>k.replace("x"," × ")))];
+    const miss=[...new Set(Object.entries(p.hist).filter(([,h])=>h.w).map(([k])=>k.split("x").join(" × ")))];
     c.innerHTML=`
       <div class="medal">${players.length>1?medals[rank]:"🏁"}</div>
       <div class="rname"></div><div style="font-size:13px;color:var(--muted)">${p.ch.name} · power used ${p.used}×</div>
