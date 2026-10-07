@@ -24,29 +24,64 @@
   button{font:inherit;color:inherit;cursor:pointer;border:0}
   button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
-  /* ---------- SETUP ---------- */
+  /* ---------- SETUP (single screen, no scrolling) ---------- */
   #setup{align-items:center;justify-content:center;overflow:auto}
-  .setup-card{width:min(760px,100%);background:var(--card);border:1px solid var(--card-b);border-radius:28px;
-    padding:clamp(16px,3.5vh,34px);backdrop-filter:blur(8px);text-align:center}
-  h1{font-size:clamp(28px,6vh,54px);line-height:1.05;letter-spacing:.5px}
+  .setup-card{width:min(1180px,100%);max-height:100%;min-height:0;display:flex;flex-direction:column;gap:clamp(6px,1.6vh,16px);
+    background:linear-gradient(180deg,#ffffff18,#ffffff0a);border:1px solid #ffffff2a;border-radius:28px;box-shadow:0 18px 50px #0006;
+    padding:clamp(10px,2.4vh,26px) clamp(12px,2.4vw,32px);text-align:center}
+  h1{font-size:clamp(24px,5.4vh,50px);line-height:1.05;letter-spacing:.5px}
   h1 span{color:var(--gold)}
-  .tag{color:var(--muted);margin-top:6px;font-size:clamp(14px,2.2vh,19px)}
-  .goal{margin:14px auto 0;max-width:560px;background:#00000033;border-radius:14px;padding:10px 14px;font-size:clamp(14px,2.2vh,18px)}
-  .lbl{margin:clamp(12px,2.5vh,22px) 0 8px;font-weight:700;color:var(--muted);letter-spacing:1px;font-size:13px;text-transform:uppercase}
-  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-  .opt{min-width:72px;padding:12px 18px;border-radius:16px;background:#ffffff1a;border:2px solid transparent;font-size:clamp(18px,3vh,26px);font-weight:700;transition:.15s}
-  .opt small{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+  .tag{color:var(--muted);margin-top:4px;font-size:clamp(12px,2vh,18px)}
+  .steps{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:clamp(6px,1.2vh,12px)}
+  .steps span{background:#00000038;border-radius:14px;padding:clamp(3px,.7vh,7px) clamp(8px,1vw,14px);font-size:clamp(11px,1.8vh,15px)}
+  .steps b{color:var(--gold)}
+  .cfg{display:flex;gap:clamp(12px,3vw,48px);justify-content:center;flex-wrap:wrap;align-items:flex-start}
+  .sgroup{min-width:0}
+  .lbl{margin:0 0 clamp(4px,.9vh,8px);font-weight:700;color:var(--muted);letter-spacing:1px;font-size:clamp(10px,1.6vh,13px);text-transform:uppercase}
+  .row{display:flex;gap:clamp(6px,.8vw,10px);justify-content:center;flex-wrap:wrap}
+  .opt{min-width:clamp(50px,6vw,72px);padding:clamp(5px,1.1vh,12px) clamp(10px,1.3vw,18px);border-radius:14px;background:#ffffff1a;border:2px solid transparent;font-size:clamp(16px,3vh,26px);font-weight:700;transition:.15s;line-height:1.15}
+  .opt small{display:block;font-size:clamp(9px,1.4vh,12px);font-weight:400;color:var(--muted)}
   .opt:hover{background:#ffffff2e}
   .opt.sel{background:var(--gold);color:#241a00;border-color:#fff}
   .opt.sel small{color:#4a3a00}
-  .names{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
-  .names label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);text-align:left}
-  .names input{padding:10px 12px;border-radius:12px;border:2px solid var(--c);background:#00000040;color:var(--text);font:inherit;font-size:17px;width:100%}
-  .big{margin-top:clamp(14px,3vh,26px);padding:clamp(12px,2vh,18px) clamp(28px,6vw,60px);border-radius:60px;
-    background:linear-gradient(135deg,#ff9f1c,#ff5d73);font-size:clamp(20px,3.5vh,30px);font-weight:800;
-    box-shadow:0 8px 0 #9c2f45,0 14px 30px #0008;transition:transform .1s}
-  .big:active{transform:translateY(4px);box-shadow:0 4px 0 #9c2f45,0 8px 20px #0008}
-  .keys-help{margin-top:12px;font-size:12px;color:var(--muted)}
+  .heroes{flex:1;min-height:0;display:flex;flex-direction:column}
+  .names{display:grid;gap:clamp(6px,1.2vw,14px);justify-content:center;align-content:center;flex:1;min-height:0}
+  .names.n1{grid-template-columns:minmax(0,420px)}
+  .names.n2{grid-template-columns:repeat(2,minmax(0,360px))}
+  .names.n3{grid-template-columns:repeat(3,minmax(0,300px))}
+  .names.n4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .pcard{--c:#fff;min-width:0;background:#0000002e;border:2px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:18px;padding:clamp(6px,1.3vh,12px);display:flex;flex-direction:column;gap:clamp(4px,.9vh,8px)}
+  .pcard input{width:100%;padding:clamp(5px,1vh,10px) 12px;border-radius:12px;border:2px solid var(--c);background:#00000040;color:var(--text);font:inherit;font-size:clamp(14px,2.3vh,18px);font-weight:700;text-align:center}
+  .chars{display:flex;gap:clamp(3px,.5vw,6px);flex-wrap:wrap;justify-content:center}
+  .ch{width:clamp(34px,5.2vh,46px);height:clamp(34px,5.2vh,46px);border-radius:12px;background:#ffffff1a;border:2px solid transparent;font-size:clamp(18px,3vh,26px);line-height:1;transition:.15s}
+  .ch:hover{background:#ffffff33}
+  .ch.sel{background:var(--c);border-color:#fff;transform:scale(1.08)}
+  .ch:disabled{opacity:.25;cursor:not-allowed}
+  .ch-desc{font-size:clamp(10px,1.6vh,13px);color:var(--text);text-align:center;line-height:1.35}
+  .ch-desc b{color:var(--c)}
+  .ch-note{margin-top:clamp(4px,.8vh,8px);font-size:clamp(10px,1.5vh,12px);color:var(--muted)}
+  .foot{flex:none}
+  .setup-card{overflow:auto}
+  @media (max-width:760px){
+    .steps,.tag{display:none}
+    .cfg{gap:6px 16px}
+    .names.n2,.names.n3,.names.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .names.n2{grid-template-columns:minmax(0,1fr)}
+    .names.n1{grid-template-columns:minmax(0,1fr)}
+    .names.n3 .ch-desc,.names.n4 .ch-desc{display:none}
+    .ch{width:28px;height:28px;font-size:16px;border-radius:9px}
+    .chars{gap:3px}
+    .opt{min-width:44px;padding:4px 10px}
+    .foot .btns{gap:8px}
+    .big{white-space:nowrap;padding:10px 26px}
+  }
+  .foot .btns{display:flex;gap:12px;justify-content:center;align-items:center}
+  .big{padding:clamp(8px,1.8vh,18px) clamp(26px,5vw,60px);border-radius:60px;
+    background:linear-gradient(135deg,#ff9f1c,#ff5d73);font-size:clamp(18px,3.4vh,30px);font-weight:800;
+    box-shadow:0 6px 0 #9c2f45,0 12px 26px #0008;transition:transform .1s}
+  .big:active{transform:translateY(4px);box-shadow:0 2px 0 #9c2f45,0 6px 16px #0008}
+  .secondary{padding:clamp(7px,1.5vh,14px) clamp(14px,2vw,22px);border-radius:30px;background:#ffffff26;font-weight:800;font-size:clamp(13px,2.3vh,19px)}
+  .keys-help{margin-top:clamp(5px,1vh,10px);font-size:clamp(10px,1.6vh,12px);color:var(--muted)}
 
   /* ---------- GAME ---------- */
   #game{gap:clamp(6px,1.5vh,14px)}
@@ -182,15 +217,6 @@
   #confetti{position:fixed;inset:0;z-index:30;pointer-events:none}
 
   /* characters & abilities */
-  .chars{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:6px}
-  .ch{width:46px;height:46px;border-radius:14px;background:#ffffff1a;border:2px solid transparent;font-size:26px;line-height:1;transition:.15s}
-  .ch:hover{background:#ffffff33}
-  .ch.sel{background:var(--c);border-color:#fff;transform:scale(1.1)}
-  .ch:disabled{opacity:.25;cursor:not-allowed}
-  .ch-desc{font-size:12px;color:var(--text);margin-top:6px;min-height:3.2em;text-align:center}
-  .ch-desc b{color:var(--c)}
-  .pcard{background:#0000002e;border-radius:16px;padding:10px;--c:#fff}
-  .pcard input{margin-bottom:2px}
   .abil{position:relative;margin-top:4px;border-radius:14px;background:#00000055;overflow:hidden;min-height:clamp(28px,5vh,44px);
     font-weight:800;font-size:clamp(11px,2vh,16px);border:2px solid #ffffff33;width:100%}
   .abil .fill{position:absolute;inset:0 auto 0 0;width:0;background:color-mix(in srgb,var(--c) 55%,transparent);transition:width .3s}
@@ -228,22 +254,23 @@
 <!-- SETUP -->
 <section id="setup" class="screen on">
   <div class="setup-card">
-    <h1>🚀 Times Table <span>Rocket Race</span></h1>
-    <p class="tag">Answer fast, charge your hero's power, and use it to win the race!</p>
-    <p class="goal"><b>Goal:</b> pick the right answer to each multiplication (1×1 to 12×12). Some questions multiply three small numbers (like 2 × 3 × 4). Right answers launch your rocket higher — keep a streak for a bonus multiplier! Every 5 right answers charges your <b>hero power</b> — use it to boost yourself or slow down the leader.</p>
-
-    <div class="lbl">How many players?</div>
-    <div class="row" id="pcount"></div>
-
-    <div class="lbl">Pick your character</div>
-    <div class="names" id="names"></div>
-
-    <div class="lbl">Round length</div>
-    <div class="row" id="lens"></div>
-
-    <button class="big" id="startBtn">▶ START!</button>
-    <button class="secondary" id="lbBtn">🏆 Leaderboard</button>
-    <div class="keys-help" id="keyhelp"></div>
+    <div>
+      <h1>🚀 Times Table <span>Rocket Race</span></h1>
+      <p class="tag">Answer fast, charge your hero's power, and win the race!</p>
+      <div class="steps"><span><b>1</b> Pick the right answer (1×1 to 12×12)</span><span><b>2</b> Keep a streak for bonus ×</span><span><b>3</b> Every 5 right answers charges your hero power</span></div>
+    </div>
+    <div class="cfg">
+      <div class="sgroup"><div class="lbl">Players</div><div class="row" id="pcount"></div></div>
+      <div class="sgroup"><div class="lbl">Round length</div><div class="row" id="lens"></div></div>
+    </div>
+    <div class="heroes">
+      <div class="lbl">Name &amp; pick your hero</div>
+      <div class="names" id="names"></div>
+    </div>
+    <div class="foot">
+      <div class="btns"><button class="big" id="startBtn">▶ START!</button><button class="secondary" id="lbBtn">🏆 Leaderboard</button></div>
+      <div class="keys-help" id="keyhelp"></div>
+    </div>
   </div>
 </section>
 
@@ -351,7 +378,7 @@ function buildSetup(){
     b.innerHTML=`${n}<small>${n===1?"player":"players"}</small>`;
     b.onclick=()=>{settings.players=n;saveSettings();buildSetup();}; pc.appendChild(b);
   }
-  const nm=$("names"); nm.innerHTML="";
+  const nm=$("names"); nm.innerHTML=""; nm.className="names n"+settings.players;
   for(let i=0;i<settings.players;i++){
     if(settings.players===1 && CHARS[settings.chars[i]].kind==="attack") settings.chars[i]=0;
     const card=document.createElement("div"); card.className="pcard"; card.style.setProperty("--c",COLORS[i]);
@@ -369,8 +396,8 @@ function buildSetup(){
     d.innerHTML=`<b>${ch.name}</b> — ${ch.kind==="attack"?"⚔ ":"✨ "}${ch.desc}`;
     card.append(inp,row,d); nm.appendChild(card);
   }
-  if(settings.players===1){ const n=document.createElement("div"); n.className="keys-help"; n.style.gridColumn="1/-1";
-    n.textContent="Attack characters need an opponent — play with 2+ players to unlock them."; nm.appendChild(n); }
+  if(settings.players===1){ const n=document.createElement("div"); n.className="ch-note"; n.style.gridColumn="1/-1";
+    n.textContent="⚔ Attack heroes need an opponent — pick 2+ players to unlock them."; nm.appendChild(n); }
   const ln=$("lens"); ln.innerHTML="";
   for(const s of LENGTHS){
     const b=document.createElement("button"); b.className="opt"+(settings.length===s?" sel":"");
@@ -378,7 +405,7 @@ function buildSetup(){
     b.onclick=()=>{settings.length=s;saveSettings();buildSetup();}; ln.appendChild(b);
   }
   $("keyhelp").innerHTML = "Tap the answers, or use the keyboard — " +
-    Array.from({length:settings.players},(_,i)=>`<b style="color:${COLORS[i]}">P${i+1}: ${KEYSETS[i].join(" ").toUpperCase()} · power ${ABIL_KEYS[i].toUpperCase()}</b>`).join(" &nbsp;·&nbsp; ");
+    Array.from({length:settings.players},(_,i)=>`<b style="color:${COLORS[i]}">P${i+1}: ${KEYSETS[i].join(" ").toUpperCase()} + power ${ABIL_KEYS[i].toUpperCase()}</b>`).join(" &nbsp;·&nbsp; ");
 }
 
 /* ====================== GAME STATE ====================== */
