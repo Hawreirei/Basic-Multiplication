@@ -60,6 +60,24 @@
   .ch-desc{font-size:clamp(10px,1.6vh,13px);color:var(--text);text-align:center;line-height:1.35}
   .ch-desc b{color:var(--c)}
   .ch-note{margin-top:clamp(4px,.8vh,8px);font-size:clamp(10px,1.5vh,12px);color:var(--muted)}
+  /* per-player on-screen keyboard */
+  #kb{position:fixed;left:50%;bottom:clamp(6px,2vh,18px);transform:translate(-50%,130%);z-index:22;width:min(760px,calc(100% - 12px));--c:#fff;
+    background:#17124a;border:3px solid var(--c);border-radius:22px;padding:clamp(6px,1.2vh,12px);box-shadow:0 0 40px color-mix(in srgb,var(--c) 45%,transparent),0 16px 40px #000a;
+    transition:transform .22s cubic-bezier(.2,.9,.3,1);visibility:hidden}
+  #kb.on{transform:translate(-50%,0);visibility:visible}
+  #kb .kbh{display:flex;align-items:center;gap:10px;margin-bottom:clamp(4px,1vh,8px)}
+  #kb .kbwho{font-weight:900;color:var(--c);white-space:nowrap;font-size:clamp(12px,2vh,16px)}
+  #kb .kbtxt{flex:1;min-width:0;background:#00000055;border-radius:12px;padding:clamp(4px,.9vh,8px) 12px;font-weight:800;font-size:clamp(16px,3vh,24px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:1.5em}
+  #kb .kbtxt::after{content:"|";color:var(--c);animation:blink 1s steps(1) infinite;margin-left:1px}
+  #kb .kbrow{display:flex;gap:clamp(3px,.6vw,6px);justify-content:center;margin-top:clamp(3px,.7vh,6px)}
+  #kb button{flex:1 1 0;min-width:0;max-width:64px;height:clamp(34px,6vh,50px);border-radius:10px;background:#ffffff22;font-weight:800;font-size:clamp(14px,2.4vh,20px);color:#fff;border:0;cursor:pointer;padding:0}
+  #kb button:active{background:var(--c);color:#111;transform:scale(.94)}
+  #kb button.wide{max-width:none;flex:1.6 1 0;font-size:clamp(11px,1.9vh,15px)}
+  #kb button.space{max-width:none;flex:5 1 0}
+  #kb button.done{background:var(--c);color:#111}
+  #kb button.sh.on{background:var(--gold);color:#111}
+  @keyframes blink{50%{opacity:0}}
+  .pcard.typing{box-shadow:0 0 0 3px var(--c),0 0 24px color-mix(in srgb,var(--c) 60%,transparent)}
   .foot{flex:none}
   .setup-card{overflow:auto}
   @media (max-width:760px){
@@ -300,6 +318,7 @@
 </section>
 
 <div id="lbModal"><aside class="lbpanel" id="lbModalBox"></aside></div>
+<div id="kb" role="dialog" aria-label="Name keyboard"></div>
 <div id="overlay"><div id="bigcount"></div><div id="overtxt"></div></div>
 <canvas id="confetti"></canvas>
 
@@ -370,6 +389,59 @@ const sfx = {
     requestAnimationFrame(draw); })();
 })();
 
+/* ====================== PER-PLAYER ON-SCREEN KEYBOARD ====================== */
+let kbFor=-1, kbShift=true, kbFresh=false;
+const KB_ROWS=["1234567890","qwertyuiop","asdfghjkl","zxcvbnm"];
+function setName(i,v){
+  settings.names[i]=v.slice(0,12); saveSettings();
+  const inp=document.querySelector(`#names input[data-i="${i}"]`); if(inp) inp.value=settings.names[i];
+  kbPreview();
+}
+function kbPreview(){ const t=$("kb").querySelector(".kbtxt"); if(t&&kbFor>-1) t.textContent=settings.names[kbFor]||""; }
+function buildKb(){
+  const kb=$("kb"); kb.style.setProperty("--c",COLORS[kbFor]);
+  kb.innerHTML=`<div class="kbh"><span class="kbwho">⌨ Player ${kbFor+1}</span><div class="kbtxt"></div></div>`;
+  const key=(label,cls,fn)=>{ const b=document.createElement("button"); b.type="button"; b.className=cls||""; b.textContent=label;
+    b.addEventListener("pointerdown",e=>{ e.preventDefault(); fn(); }); return b; };
+  const type=ch=>{
+    let cur=kbFresh?"":(settings.names[kbFor]||""); kbFresh=false;
+    if(cur.length>=12) return;
+    cur+=kbShift?ch.toUpperCase():ch;
+    setName(kbFor,cur); kbShift=false; refreshShift();
+  };
+  KB_ROWS.forEach((r,ri)=>{
+    const row=document.createElement("div"); row.className="kbrow";
+    if(ri===3) row.appendChild(key("⇧","wide sh"+(kbShift?" on":""),()=>{ kbShift=!kbShift; refreshShift(); }));
+    [...r].forEach(ch=>row.appendChild(key(kbShift&&isNaN(+ch)?ch.toUpperCase():ch,"k",()=>type(ch))));
+    if(ri===3) row.appendChild(key("⌫","wide",()=>{ const cur=kbFresh?"":(settings.names[kbFor]||""); kbFresh=false; setName(kbFor,cur.slice(0,-1)); autoShift(); }));
+    kb.appendChild(row);
+  });
+  const last=document.createElement("div"); last.className="kbrow";
+  last.append(key("Clear","wide",()=>{ kbFresh=false; setName(kbFor,""); autoShift(); }),
+              key("space","space",()=>{ const cur=kbFresh?"":(settings.names[kbFor]||""); kbFresh=false; if(cur&&!cur.endsWith(" ")&&cur.length<12){ setName(kbFor,cur+" "); autoShift(); } }),
+              key("✔ Done","wide done",closeKb));
+  kb.appendChild(last);
+  kbPreview();
+}
+function refreshShift(){
+  const kb=$("kb"); kb.querySelectorAll(".k").forEach(b=>{ const ch=b.textContent.toLowerCase(); b.textContent=kbShift&&isNaN(+ch)?ch.toUpperCase():ch; });
+  const sh=kb.querySelector(".sh"); if(sh) sh.classList.toggle("on",kbShift);
+}
+function autoShift(){ const cur=settings.names[kbFor]||""; kbShift=!cur||cur.endsWith(" "); refreshShift(); }
+function openKb(i){
+  kbFor=i; kbFresh=true; kbShift=true; buildKb(); $("kb").classList.add("on");
+  document.querySelectorAll("#names .pcard").forEach((c,k)=>c.classList.toggle("typing",k===i));
+}
+function closeKb(){
+  kbFor=-1; $("kb").classList.remove("on");
+  document.querySelectorAll("#names .pcard").forEach(c=>c.classList.remove("typing"));
+  settings.names=settings.names.map((n,i)=>(n||"").trim()||"Player "+(i+1)); saveSettings();
+  document.querySelectorAll("#names input").forEach(inp=>{ inp.value=settings.names[+inp.dataset.i]; });
+}
+document.addEventListener("pointerdown",e=>{
+  if(kbFor>-1 && !e.target.closest("#kb") && !e.target.closest("#names input")) closeKb();
+});
+
 /* ====================== SETUP SCREEN ====================== */
 function buildSetup(){
   const pc=$("pcount"); pc.innerHTML="";
@@ -384,8 +456,11 @@ function buildSetup(){
     const card=document.createElement("div"); card.className="pcard"; card.style.setProperty("--c",COLORS[i]);
     const inp=document.createElement("input"); inp.maxLength=12; inp.value=settings.names[i]; inp.setAttribute("aria-label","Player "+(i+1)+" name");
     inp.style.setProperty("--c",COLORS[i]);
-    inp.oninput=()=>{settings.names[i]=inp.value; saveSettings();};
-    inp.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); inp.blur(); } e.stopPropagation(); };
+    inp.dataset.i=i; inp.setAttribute("inputmode","none"); inp.autocomplete="off";
+    inp.oninput=()=>{settings.names[i]=inp.value; saveSettings(); kbPreview();};
+    inp.onfocus=()=>{ openKb(i); try{ inp.select(); }catch(e){} };
+    inp.onkeydown=e=>{ if(e.key==="Enter"||e.key==="Escape"){ e.preventDefault(); closeKb(); inp.blur(); } e.stopPropagation(); };
+    if(kbFor===i) card.classList.add("typing");
     const row=document.createElement("div"); row.className="chars";
     CHARS.forEach((c,ci)=>{
       const b=document.createElement("button"); b.className="ch"+(settings.chars[i]===ci?" sel":""); b.textContent=c.icon; b.title=c.name;
@@ -606,6 +681,7 @@ function updatePanel(p,bump){
 
 /* ====================== FLOW ====================== */
 function startGame(){
+  closeKb();
   players=Array.from({length:settings.players},(_,i)=>newPlayer(i));
   goldenCooldown=0;
   show("game"); buildArena();
