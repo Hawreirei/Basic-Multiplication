@@ -105,25 +105,35 @@
   .rhead{display:flex;align-items:baseline;justify-content:center;gap:16px;flex-wrap:wrap;flex:none}
   #results h2{font-size:clamp(22px,5vh,44px)}
   #winner{font-size:clamp(15px,2.8vh,24px);color:var(--gold);font-weight:800;text-align:center}
-  .rbody{flex:1;min-height:0;display:flex;gap:clamp(8px,1.5vw,18px);width:min(1400px,100%);margin:0 auto}
-  .podium{flex:1;min-width:0;min-height:0;display:grid;gap:clamp(6px,1.2vw,16px);align-items:stretch}
-  .rcard{--c:#fff;min-height:0;min-width:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:safe center;
-    background:#ffffff18;border:3px solid var(--c);border-radius:20px;padding:clamp(6px,1.4vh,14px);text-align:center;animation:rise .6s backwards}
+  .rbody{flex:1;min-height:0;display:flex;gap:clamp(8px,1.4vw,18px);width:min(1500px,100%);margin:0 auto}
+  .rleft{flex:1.15;min-width:0;min-height:0;display:flex;flex-direction:column;gap:clamp(6px,1.2vh,12px);--k:1}
+  .rleft.n1{--k:1.2}.rleft.n2{--k:1.15}.rleft.n3{--k:1.05}.rleft.n4{--k:.9}
+  .rmid{flex:1.1;min-width:0;min-height:0;display:grid;gap:clamp(6px,1.2vh,12px) clamp(6px,1vw,12px);background:#ffffff0d;border:2px solid var(--card-b);border-radius:20px;padding:clamp(8px,1.4vh,14px)}
+  .rcard{--c:#fff;flex:1;min-height:0;min-width:0;overflow:hidden;background:#ffffff18;border:3px solid var(--c);border-radius:20px;
+    padding:clamp(6px,1.2vh,14px) clamp(10px,1.4vw,20px);animation:rise .6s backwards;
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"m n s" "m t s" "st st st";align-items:center;column-gap:clamp(8px,1.2vw,18px);row-gap:2px;align-content:center}
   .rcard.first{background:linear-gradient(180deg,#ffd43b33,#ffffff14);box-shadow:0 0 40px #ffd43b66}
-  .medal{font-size:clamp(24px,5vh,46px);line-height:1.1}
-  .rname{font-weight:900;color:var(--c);font-size:clamp(15px,2.6vh,24px);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .rhero{font-size:clamp(10px,1.7vh,13px);color:var(--muted)}
-  .rscore{font-size:clamp(30px,7vh,60px);font-weight:900;line-height:1.05}
-  .rtitle{font-weight:800;color:var(--gold);margin:0 0 4px;font-size:clamp(12px,2vh,16px)}
-  .newbest{display:inline-block;background:var(--gold);color:#241a00;font-weight:900;border-radius:12px;padding:1px 10px;margin-bottom:3px;font-size:clamp(10px,1.7vh,13px);animation:pulse .6s infinite alternate}
-  .rstats{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;font-size:clamp(10px,1.7vh,14px);color:var(--muted)}
-  .rstats b{display:block;color:var(--text);font-size:clamp(14px,2.4vh,21px);line-height:1.15}
-  .practice{margin-top:6px;font-size:clamp(10px,1.6vh,12px);color:var(--muted);line-height:1.35;max-height:2.8em;overflow:hidden}
-  .practice b{color:var(--bad)}
-  .grid{margin-top:6px;width:min(100%,17vh);display:grid;grid-template-columns:repeat(12,1fr);gap:1px}
-  .grid i{aspect-ratio:1;border-radius:2px;background:#ffffff1a}
-  .grid i.g{background:var(--good)} .grid i.r{background:var(--bad)} .grid i.y{background:var(--gold)}
-  .gl{font-size:10px;color:var(--muted);margin-top:2px}
+  .medal{grid-area:m;font-size:calc(var(--k)*clamp(26px,5vh,46px));line-height:1}
+  .rwho{grid-area:n;min-width:0}
+  .rname{font-weight:900;color:var(--c);font-size:calc(var(--k)*clamp(15px,2.6vh,24px));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rhero{font-size:calc(var(--k)*clamp(10px,1.6vh,13px));color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rscore{grid-area:s;font-size:calc(var(--k)*clamp(34px,7.5vh,68px));font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+  .rtitle{grid-area:t;font-weight:800;color:var(--gold);font-size:calc(var(--k)*clamp(12px,2vh,17px));line-height:1.25}
+  .rtitle .newbest{margin-left:8px}
+  .newbest{display:inline-block;background:var(--gold);color:#241a00;font-weight:900;border-radius:12px;padding:0 9px;font-size:.8em;animation:pulse .6s infinite alternate}
+  .rstats{grid-area:st;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:clamp(2px,.8vh,8px);text-align:center;font-size:calc(var(--k)*clamp(9px,1.5vh,13px));color:var(--muted)}
+  .rstats b{display:block;color:var(--text);font-size:calc(var(--k)*clamp(14px,2.4vh,21px));line-height:1.15}
+  /* middle: mastery diagrams */
+  .gbox{min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;gap:3px;--c:#fff}
+  .gtitle{font-weight:800;color:var(--c);font-size:clamp(11px,1.9vh,15px);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gwrap{flex:1;min-height:0;width:100%;container-type:size;display:flex;align-items:center;justify-content:center}
+  .hm{width:min(100cqw,100cqh);height:min(100cqw,100cqh);display:grid;grid-template-columns:repeat(13,1fr);grid-template-rows:repeat(13,1fr);gap:1px}
+  .hm i{border-radius:2px;background:#ffffff1a;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:min(2.4cqw,2.4cqh);color:#0009;font-weight:800;overflow:hidden}
+  .hm i.ax{background:none;color:var(--muted);font-size:min(2.6cqw,2.6cqh)}
+  .hm i.g{background:var(--good)} .hm i.r{background:var(--bad)} .hm i.y{background:var(--gold)}
+  .gl{font-size:clamp(9px,1.5vh,12px);color:var(--muted);text-align:center;line-height:1.3}
+  .gl b{color:var(--bad)}
+  .mlegend{grid-column:1/-1;font-size:clamp(10px,1.6vh,13px);color:var(--muted);text-align:center}
   .rbtns{display:flex;gap:12px;justify-content:center;flex:none}
   .rbtns .big{margin-top:0;padding:clamp(8px,1.6vh,14px) clamp(20px,4vw,44px);font-size:clamp(15px,2.8vh,24px);box-shadow:0 5px 0 #9c2f45,0 8px 18px #0008}
   .rbtns .big.alt{box-shadow:0 5px 0 #0006}
@@ -153,13 +163,14 @@
   .secondary{margin-top:10px;margin-left:10px;padding:10px 20px;border-radius:30px;background:#ffffff26;font-weight:800;font-size:clamp(14px,2.4vh,19px)}
   @media (max-width:760px){
     .rbody{flex-direction:column}
+    .rmid{display:none}
     .lbpanel{width:100%;flex:0 0 34%}
-    .podium{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px}
-    .grid,.gl,.practice,.rhero,.rtitle{display:none}
-    .medal{font-size:22px}
-    .rstats{display:none}
+    .rleft{flex:1;--k:.8!important}
+    .rleft.n1{--k:1!important}
+    .rstats,.rhero{display:none}
+    .rcard{padding:6px 10px;grid-template-areas:"m n s" "m t s"}
   }
-  @media (max-height:640px){ .grid,.gl{display:none} }
+  @media (min-width:761px) and (max-width:1000px){ .rmid{display:none} .lbpanel{width:clamp(230px,34vw,330px)} }
   #confetti{position:fixed;inset:0;z-index:30;pointer-events:none}
 
   /* characters & abilities */
@@ -242,7 +253,8 @@
 <section id="results" class="screen">
   <div class="rhead"><h2>🏁 Race Over!</h2><div id="winner"></div></div>
   <div class="rbody">
-    <div class="podium" id="podium"></div>
+    <div class="rleft" id="podium"></div>
+    <div class="rmid" id="rmid"></div>
     <aside class="lbpanel" id="lbResults"></aside>
   </div>
   <div class="rbtns">
@@ -661,7 +673,9 @@ function buildResults(){
   const topScore=ranked[0].score, winners=ranked.filter(p=>p.score===topScore);
   $("winner").textContent = players.length===1 ? `Great flying, ${players[0].name}!` :
     winners.length>1 ? "🤝 It's a tie: "+winners.map(w=>w.name).join(" & ") : `🏆 ${ranked[0].name} wins!`;
-  const pod=$("podium"); pod.innerHTML=""; pod.style.gridTemplateColumns=`repeat(${players.length},minmax(0,1fr))`;
+  const pod=$("podium"); pod.innerHTML=""; pod.className="rleft n"+players.length;
+  const mid=$("rmid"); mid.innerHTML=""; mid.style.gridTemplateColumns=`repeat(${players.length===1?1:2},minmax(0,1fr))`;
+  mid.style.gridTemplateRows=`repeat(${players.length>2?2:1},minmax(0,1fr)) auto`;
   const medals=["🥇","🥈","🥉","4️⃣"];
   const bestKey=`best_${players.length}p_${settings.length}`;
   const prevBest=store.get(bestKey,0);
@@ -670,31 +684,39 @@ function buildResults(){
     const total=p.correct+p.wrong, acc=total?Math.round(100*p.correct/total):0;
     const avg=p.correct?(p.timeSum/p.correct).toFixed(1)+"s":"–";
     const isBest=p.score>prevBest && p.score>0;
+    // ---- left: score card
     const c=document.createElement("div"); c.className="rcard"+(rank===0?" first":"");
     c.style.setProperty("--c",p.color); c.style.animationDelay=(rank*.12)+"s";
-    // mastery grid: green = always right, red = missed, yellow = mixed
-    let grid="";
-    for(let a=1;a<=12;a++) for(let b=1;b<=12;b++){
-      const h=p.hist[Math.min(a,b)+"x"+Math.max(a,b)];
-      grid+=`<i class="${!h?"":h.w&&!h.r?"r":h.w?"y":"g"}"></i>`;
-    }
-    const miss=[...new Set(Object.entries(p.hist).filter(([,h])=>h.w).map(([k])=>k.split("x").join(" × ")))];
     c.innerHTML=`
       <div class="medal">${players.length>1?medals[rank]:"🏁"}</div>
-      <div class="rname"></div><div class="rhero">${p.ch.name} · power used ${p.used}×</div>
+      <div class="rwho"><div class="rname"></div><div class="rhero">${p.ch.name} · power used ${p.used}×</div></div>
       <div class="rscore">${p.score}</div>
-      ${isBest?'<div class="newbest">⭐ NEW BEST!</div>':""}
-      <div class="rtitle">${titleFor(p.score)}</div>
+      <div class="rtitle">${titleFor(p.score)}${isBest?'<span class="newbest">⭐ NEW BEST!</span>':""}</div>
       <div class="rstats">
         <div><b>${p.correct}</b>correct</div><div><b>${acc}%</b>accuracy</div>
         <div><b>${p.best}</b>best streak</div><div><b>${avg}</b>avg speed</div>
-      </div>
-      <div class="grid">${grid}</div>
-      <div class="gl">Facts you tried: 🟩 nailed · 🟨 tricky · 🟥 missed</div>
-      <div class="practice">${miss.length?"Practice: <b>"+miss.slice(0,6).join(", ")+"</b>":"🎉 No mistakes — perfect!"}</div>`;
+      </div>`;
     c.querySelector(".rname").textContent=p.ch.icon+" "+p.name;
     pod.appendChild(c);
+    // ---- middle: 12x12 mastery diagram (green = always right, yellow = tricky, red = missed)
+    let cells='<i class="ax"></i>';
+    for(let b=1;b<=12;b++) cells+=`<i class="ax">${b}</i>`;
+    for(let a=1;a<=12;a++){
+      cells+=`<i class="ax">${a}</i>`;
+      for(let b=1;b<=12;b++){
+        const h=p.hist[Math.min(a,b)+"x"+Math.max(a,b)];
+        cells+=`<i class="${!h?"":h.w&&!h.r?"r":h.w?"y":"g"}">${h?a*b:""}</i>`;
+      }
+    }
+    const miss=[...new Set(Object.entries(p.hist).filter(([,h])=>h.w).map(([k])=>k.split("x").join("×")))];
+    const gb=document.createElement("div"); gb.className="gbox"; gb.style.setProperty("--c",p.color);
+    gb.innerHTML=`<div class="gtitle"></div><div class="gwrap"><div class="hm">${cells}</div></div>
+      <div class="gl">${miss.length?"Practice: <b>"+miss.slice(0,4).join(", ")+"</b>":"🎉 No mistakes!"}</div>`;
+    gb.querySelector(".gtitle").textContent=p.ch.icon+" "+p.name;
+    mid.appendChild(gb);
   });
+  const lg=document.createElement("div"); lg.className="mlegend";
+  lg.textContent="Times table facts: 🟩 nailed · 🟨 tricky · 🟥 missed · grey = not tried"; mid.appendChild(lg);
   const top=Math.max(...players.map(p=>p.score));
   if(top>prevBest) store.set(bestKey,top);
 }
