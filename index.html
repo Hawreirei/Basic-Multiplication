@@ -60,22 +60,24 @@
   .ch-desc{font-size:clamp(10px,1.6vh,13px);color:var(--text);text-align:center;line-height:1.35}
   .ch-desc b{color:var(--c)}
   .ch-note{margin-top:clamp(4px,.8vh,8px);font-size:clamp(10px,1.5vh,12px);color:var(--muted)}
-  /* per-player on-screen keyboard */
-  #kb{position:fixed;left:50%;bottom:clamp(6px,2vh,18px);transform:translate(-50%,130%);z-index:22;width:min(760px,calc(100% - 12px));--c:#fff;
-    background:#17124a;border:3px solid var(--c);border-radius:22px;padding:clamp(6px,1.2vh,12px);box-shadow:0 0 40px color-mix(in srgb,var(--c) 45%,transparent),0 16px 40px #000a;
-    transition:transform .22s cubic-bezier(.2,.9,.3,1);visibility:hidden}
-  #kb.on{transform:translate(-50%,0);visibility:visible}
-  #kb .kbh{display:flex;align-items:center;gap:10px;margin-bottom:clamp(4px,1vh,8px)}
-  #kb .kbwho{font-weight:900;color:var(--c);white-space:nowrap;font-size:clamp(12px,2vh,16px)}
-  #kb .kbtxt{flex:1;min-width:0;background:#00000055;border-radius:12px;padding:clamp(4px,.9vh,8px) 12px;font-weight:800;font-size:clamp(16px,3vh,24px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:1.5em}
-  #kb .kbtxt::after{content:"|";color:var(--c);animation:blink 1s steps(1) infinite;margin-left:1px}
-  #kb .kbrow{display:flex;gap:clamp(3px,.6vw,6px);justify-content:center;margin-top:clamp(3px,.7vh,6px)}
-  #kb button{flex:1 1 0;min-width:0;max-width:64px;height:clamp(34px,6vh,50px);border-radius:10px;background:#ffffff22;font-weight:800;font-size:clamp(14px,2.4vh,20px);color:#fff;border:0;cursor:pointer;padding:0}
-  #kb button:active{background:var(--c);color:#111;transform:scale(.94)}
-  #kb button.wide{max-width:none;flex:1.6 1 0;font-size:clamp(11px,1.9vh,15px)}
-  #kb button.space{max-width:none;flex:5 1 0}
-  #kb button.done{background:var(--c);color:#111}
-  #kb button.sh.on{background:var(--gold);color:#111}
+  /* per-player on-screen keyboards (several can be open at once) */
+  #kb{position:fixed;left:50%;bottom:clamp(6px,2vh,18px);transform:translateX(-50%);z-index:22;width:min(1180px,calc(100% - 12px));
+    display:flex;gap:clamp(4px,.8vw,10px);justify-content:center;align-items:flex-end;pointer-events:none;--kh:clamp(32px,5.6vh,48px)}
+  #kb[data-n="3"],#kb[data-n="4"]{--kh:clamp(26px,4.6vh,40px)}
+  .kbp{--c:#fff;pointer-events:auto;flex:1 1 0;min-width:0;max-width:760px;background:#17124a;border:3px solid var(--c);border-radius:20px;
+    padding:clamp(5px,1vh,10px);box-shadow:0 0 34px color-mix(in srgb,var(--c) 45%,transparent),0 14px 34px #000a;animation:kbin .22s cubic-bezier(.2,.9,.3,1)}
+  @keyframes kbin{from{transform:translateY(60px);opacity:0}}
+  .kbp .kbh{display:flex;align-items:center;gap:8px;margin-bottom:clamp(3px,.8vh,7px)}
+  .kbp .kbwho{font-weight:900;color:var(--c);white-space:nowrap;font-size:clamp(10px,1.8vh,15px)}
+  .kbp .kbtxt{flex:1;min-width:0;background:#00000055;border-radius:10px;padding:clamp(3px,.7vh,7px) 10px;font-weight:800;font-size:clamp(13px,2.5vh,22px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:1.4em}
+  .kbp .kbtxt::after{content:"|";color:var(--c);animation:blink 1s steps(1) infinite;margin-left:1px}
+  .kbp .kbrow{display:flex;gap:clamp(2px,.4vw,5px);justify-content:center;margin-top:clamp(2px,.6vh,5px)}
+  .kbp button{flex:1 1 0;min-width:0;max-width:60px;height:var(--kh);border-radius:8px;background:#ffffff22;font-weight:800;font-size:clamp(11px,2.1vh,19px);color:#fff;border:0;cursor:pointer;padding:0}
+  .kbp button:active{background:var(--c);color:#111;transform:scale(.94)}
+  .kbp button.wide{max-width:none;flex:1.6 1 0;font-size:clamp(9px,1.6vh,14px)}
+  .kbp button.space{max-width:none;flex:5 1 0}
+  .kbp button.done{background:var(--c);color:#111}
+  .kbp button.sh.on{background:var(--gold);color:#111}
   @keyframes blink{50%{opacity:0}}
   .pcard.typing{box-shadow:0 0 0 3px var(--c),0 0 24px color-mix(in srgb,var(--c) 60%,transparent)}
   .foot{flex:none}
@@ -84,9 +86,8 @@
     .steps,.tag{display:none}
     .cfg{gap:6px 16px}
     .names.n2,.names.n3,.names.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .names.n2{grid-template-columns:minmax(0,1fr)}
     .names.n1{grid-template-columns:minmax(0,1fr)}
-    .names.n3 .ch-desc,.names.n4 .ch-desc{display:none}
+    .names.n2 .ch-desc,.names.n3 .ch-desc,.names.n4 .ch-desc{display:none}
     .ch{width:28px;height:28px;font-size:16px;border-radius:9px}
     .chars{gap:3px}
     .opt{min-width:44px;padding:4px 10px}
@@ -389,58 +390,63 @@ const sfx = {
     requestAnimationFrame(draw); })();
 })();
 
-/* ====================== PER-PLAYER ON-SCREEN KEYBOARD ====================== */
-let kbFor=-1, kbShift=true, kbFresh=false;
+/* ====================== PER-PLAYER ON-SCREEN KEYBOARDS ====================== */
+// Every player gets their own keyboard; any number can be open at the same time.
+const kbOpen={};               // player index -> {shift, fresh, el}
 const KB_ROWS=["1234567890","qwertyuiop","asdfghjkl","zxcvbnm"];
 function setName(i,v){
   settings.names[i]=v.slice(0,12); saveSettings();
   const inp=document.querySelector(`#names input[data-i="${i}"]`); if(inp) inp.value=settings.names[i];
-  kbPreview();
+  kbPreview(i);
 }
-function kbPreview(){ const t=$("kb").querySelector(".kbtxt"); if(t&&kbFor>-1) t.textContent=settings.names[kbFor]||""; }
-function buildKb(){
-  const kb=$("kb"); kb.style.setProperty("--c",COLORS[kbFor]);
-  kb.innerHTML=`<div class="kbh"><span class="kbwho">⌨ Player ${kbFor+1}</span><div class="kbtxt"></div></div>`;
-  const key=(label,cls,fn)=>{ const b=document.createElement("button"); b.type="button"; b.className=cls||""; b.textContent=label;
+function kbPreview(i){ const k=kbOpen[i]; if(k) k.el.querySelector(".kbtxt").textContent=settings.names[i]||""; }
+function kbRefresh(i){
+  const k=kbOpen[i]; if(!k) return;
+  k.el.querySelectorAll(".k").forEach(b=>{ const ch=b.dataset.ch; b.textContent=k.shift&&isNaN(+ch)?ch.toUpperCase():ch; });
+  k.el.querySelector(".sh").classList.toggle("on",k.shift);
+}
+function kbAuto(i){ const cur=settings.names[i]||""; kbOpen[i].shift=!cur||cur.endsWith(" "); kbRefresh(i); }
+function kbCur(i){ const k=kbOpen[i], cur=k.fresh?"":(settings.names[i]||""); k.fresh=false; return cur; }
+function buildKb(i){
+  const st=kbOpen[i], el=st.el;
+  el.className="kbp"; el.dataset.i=i; el.style.setProperty("--c",COLORS[i]);
+  el.innerHTML=`<div class="kbh"><span class="kbwho">⌨ Player ${i+1}</span><div class="kbtxt"></div></div>`;
+  const key=(label,cls,fn,ch)=>{ const b=document.createElement("button"); b.type="button"; b.className=cls||""; b.textContent=label; if(ch) b.dataset.ch=ch;
     b.addEventListener("pointerdown",e=>{ e.preventDefault(); fn(); }); return b; };
-  const type=ch=>{
-    let cur=kbFresh?"":(settings.names[kbFor]||""); kbFresh=false;
-    if(cur.length>=12) return;
-    cur+=kbShift?ch.toUpperCase():ch;
-    setName(kbFor,cur); kbShift=false; refreshShift();
-  };
   KB_ROWS.forEach((r,ri)=>{
     const row=document.createElement("div"); row.className="kbrow";
-    if(ri===3) row.appendChild(key("⇧","wide sh"+(kbShift?" on":""),()=>{ kbShift=!kbShift; refreshShift(); }));
-    [...r].forEach(ch=>row.appendChild(key(kbShift&&isNaN(+ch)?ch.toUpperCase():ch,"k",()=>type(ch))));
-    if(ri===3) row.appendChild(key("⌫","wide",()=>{ const cur=kbFresh?"":(settings.names[kbFor]||""); kbFresh=false; setName(kbFor,cur.slice(0,-1)); autoShift(); }));
-    kb.appendChild(row);
+    if(ri===3) row.appendChild(key("⇧","wide sh",()=>{ st.shift=!st.shift; kbRefresh(i); }));
+    [...r].forEach(ch=>row.appendChild(key(ch,"k",()=>{
+      const cur=kbCur(i); if(cur.length>=12) return;
+      setName(i,cur+(st.shift?ch.toUpperCase():ch)); st.shift=false; kbRefresh(i);
+    },ch)));
+    if(ri===3) row.appendChild(key("⌫","wide",()=>{ setName(i,kbCur(i).slice(0,-1)); kbAuto(i); }));
+    el.appendChild(row);
   });
   const last=document.createElement("div"); last.className="kbrow";
-  last.append(key("Clear","wide",()=>{ kbFresh=false; setName(kbFor,""); autoShift(); }),
-              key("space","space",()=>{ const cur=kbFresh?"":(settings.names[kbFor]||""); kbFresh=false; if(cur&&!cur.endsWith(" ")&&cur.length<12){ setName(kbFor,cur+" "); autoShift(); } }),
-              key("✔ Done","wide done",closeKb));
-  kb.appendChild(last);
-  kbPreview();
+  last.append(key("Clear","wide",()=>{ st.fresh=false; setName(i,""); kbAuto(i); }),
+              key("space","space",()=>{ const cur=kbCur(i); if(cur&&!cur.endsWith(" ")&&cur.length<12){ setName(i,cur+" "); kbAuto(i); } }),
+              key("✔ Done","wide done",()=>closeKb(i)));
+  el.appendChild(last);
+  kbRefresh(i); kbPreview(i);
 }
-function refreshShift(){
-  const kb=$("kb"); kb.querySelectorAll(".k").forEach(b=>{ const ch=b.textContent.toLowerCase(); b.textContent=kbShift&&isNaN(+ch)?ch.toUpperCase():ch; });
-  const sh=kb.querySelector(".sh"); if(sh) sh.classList.toggle("on",kbShift);
+function kbLayout(){
+  const dock=$("kb"); dock.dataset.n=Object.keys(kbOpen).length;
+  [...dock.children].sort((a,b)=>a.dataset.i-b.dataset.i).forEach(c=>dock.appendChild(c));
+  document.querySelectorAll("#names .pcard").forEach((c,k)=>c.classList.toggle("typing",!!kbOpen[k]));
 }
-function autoShift(){ const cur=settings.names[kbFor]||""; kbShift=!cur||cur.endsWith(" "); refreshShift(); }
 function openKb(i){
-  kbFor=i; kbFresh=true; kbShift=true; buildKb(); $("kb").classList.add("on");
-  document.querySelectorAll("#names .pcard").forEach((c,k)=>c.classList.toggle("typing",k===i));
+  if(kbOpen[i]) return;
+  kbOpen[i]={shift:true,fresh:true,el:document.createElement("div")};
+  buildKb(i); $("kb").appendChild(kbOpen[i].el); kbLayout();
 }
-function closeKb(){
-  kbFor=-1; $("kb").classList.remove("on");
-  document.querySelectorAll("#names .pcard").forEach(c=>c.classList.remove("typing"));
-  settings.names=settings.names.map((n,i)=>(n||"").trim()||"Player "+(i+1)); saveSettings();
-  document.querySelectorAll("#names input").forEach(inp=>{ inp.value=settings.names[+inp.dataset.i]; });
+function closeKb(i){
+  const k=kbOpen[i]; if(!k) return;
+  k.el.remove(); delete kbOpen[i]; kbLayout();
+  settings.names[i]=(settings.names[i]||"").trim()||"Player "+(i+1); saveSettings();
+  const inp=document.querySelector(`#names input[data-i="${i}"]`); if(inp) inp.value=settings.names[i];
 }
-document.addEventListener("pointerdown",e=>{
-  if(kbFor>-1 && !e.target.closest("#kb") && !e.target.closest("#names input")) closeKb();
-});
+function closeAllKb(){ Object.keys(kbOpen).forEach(i=>closeKb(+i)); }
 
 /* ====================== SETUP SCREEN ====================== */
 function buildSetup(){
@@ -448,7 +454,7 @@ function buildSetup(){
   for(let n=1;n<=4;n++){
     const b=document.createElement("button"); b.className="opt"+(settings.players===n?" sel":"");
     b.innerHTML=`${n}<small>${n===1?"player":"players"}</small>`;
-    b.onclick=()=>{settings.players=n;saveSettings();buildSetup();}; pc.appendChild(b);
+    b.onclick=()=>{closeAllKb();settings.players=n;saveSettings();buildSetup();}; pc.appendChild(b);
   }
   const nm=$("names"); nm.innerHTML=""; nm.className="names n"+settings.players;
   for(let i=0;i<settings.players;i++){
@@ -459,8 +465,8 @@ function buildSetup(){
     inp.dataset.i=i; inp.setAttribute("inputmode","none"); inp.autocomplete="off";
     inp.oninput=()=>{settings.names[i]=inp.value; saveSettings(); kbPreview();};
     inp.onfocus=()=>{ openKb(i); try{ inp.select(); }catch(e){} };
-    inp.onkeydown=e=>{ if(e.key==="Enter"||e.key==="Escape"){ e.preventDefault(); closeKb(); inp.blur(); } e.stopPropagation(); };
-    if(kbFor===i) card.classList.add("typing");
+    inp.onkeydown=e=>{ if(e.key==="Enter"||e.key==="Escape"){ e.preventDefault(); closeKb(i); inp.blur(); } e.stopPropagation(); };
+    if(kbOpen[i]) card.classList.add("typing");
     const row=document.createElement("div"); row.className="chars";
     CHARS.forEach((c,ci)=>{
       const b=document.createElement("button"); b.className="ch"+(settings.chars[i]===ci?" sel":""); b.textContent=c.icon; b.title=c.name;
@@ -681,7 +687,7 @@ function updatePanel(p,bump){
 
 /* ====================== FLOW ====================== */
 function startGame(){
-  closeKb();
+  closeAllKb();
   players=Array.from({length:settings.players},(_,i)=>newPlayer(i));
   goldenCooldown=0;
   show("game"); buildArena();
