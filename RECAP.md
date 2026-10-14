@@ -2,6 +2,8 @@
 
 This document covers what the app is, how it works, and how to reuse the same design for other learning materials (addition, fractions, vocabulary, capitals, science facts, and so on).
 
+> **Sibling apps built from this blueprint:** [Percent Rocket Race](percentages/RECAP.md) (`percentages/index.html`), with fractions → % and % of an amount.
+
 ---
 
 ## 1. One-paragraph summary
