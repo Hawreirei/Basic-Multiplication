@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Times Table Rocket Race</title>
+<title>Maths Rocket Race</title>
 <style>
   :root{
     --bg1:#0b1030; --bg2:#1b1555; --card:#ffffff14; --card-b:#ffffff26;
@@ -44,6 +44,10 @@
   .opt:hover{background:#ffffff2e}
   .opt.sel{background:var(--gold);color:#241a00;border-color:#fff}
   .opt.sel small{color:#4a3a00}
+  /* percentages modes sit under the Subject buttons */
+  .submodes{margin-top:clamp(4px,.8vh,8px);align-items:center;flex-wrap:nowrap}
+  .submodes .opt{font-size:clamp(13px,2.2vh,19px);padding:clamp(3px,.7vh,8px) clamp(8px,1vw,14px);min-width:0}
+  .subarrow{color:var(--muted);font-weight:800;font-size:clamp(14px,2.4vh,20px)}
   .heroes{flex:1;min-height:0;display:flex;flex-direction:column}
   .names{display:grid;gap:clamp(6px,1.2vw,14px);justify-content:center;align-content:center;flex:1;min-height:0}
   .names.n1{grid-template-columns:minmax(0,420px)}
@@ -92,7 +96,8 @@
     .chars{gap:3px}
     .opt{min-width:44px;padding:4px 10px}
     .foot .btns{gap:8px}
-    .big{white-space:nowrap;padding:10px 26px}
+    .big{white-space:nowrap;padding:10px 22px;font-size:20px}
+    .foot .secondary{margin:0;padding:8px 14px;font-size:14px}
   }
   .foot .btns{display:flex;gap:12px;justify-content:center;align-items:center}
   .big{padding:clamp(8px,1.8vh,18px) clamp(26px,5vw,60px);border-radius:60px;
@@ -193,11 +198,19 @@
   .pchips{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;text-transform:none;letter-spacing:0}
   .pc{--c:#fff;padding:1px 10px;border-radius:14px;background:#ffffff18;color:var(--c);font-weight:800;border:2px solid var(--c);font-size:clamp(11px,1.7vh,14px)}
   .pc.sel{background:var(--c);color:#14142b}
-  .gwrap{flex:1;min-height:0;container-type:size;display:flex;align-items:center;justify-content:center}
-  .hm{width:min(100cqw,100cqh);height:min(100cqw,100cqh);display:grid;grid-template-columns:repeat(13,1fr);grid-template-rows:repeat(13,1fr);gap:2px}
-  .hm i{border-radius:3px;background:#ffffff14;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:min(2.6cqw,2.6cqh);color:#04200f;font-weight:800;overflow:hidden}
-  .hm i.ax{background:none;color:var(--muted);font-size:min(2.8cqw,2.8cqh)}
-  .hm i.g{background:var(--good)} .hm i.r{background:var(--bad);color:#fff} .hm i.y{background:var(--gold)}
+  .gwrap{flex:1;min-height:0;container-type:size;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .hm i{font-style:normal;font-weight:800;overflow:hidden;background:#ffffff14}
+  /* multiplication: 12×12 times-table heatmap */
+  .hm.tt{width:min(100cqw,100cqh);height:min(100cqw,100cqh);display:grid;grid-template-columns:repeat(13,1fr);grid-template-rows:repeat(13,1fr);gap:2px}
+  .hm.tt i{border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:min(2.6cqw,2.6cqh);color:#04200f}
+  .hm.tt i.ax{background:none;color:var(--muted);font-size:min(2.8cqw,2.8cqh)}
+  /* percentages: "fact wall", one chip per fact, sized by JS (layoutChips) to fit the card */
+  .hm.wall{width:100%;display:grid;gap:4px;align-content:center}
+  .hm.wall i{min-width:0;border-radius:9px;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:900;color:var(--text);line-height:1.1;white-space:nowrap}
+  .hm.wall i small{font-size:.56em;font-weight:700;opacity:.8}
+  .hm.wall i.lv2{border-color:#ffffff22} .hm.wall i.lv3{border-color:#ffffff40}
+  .hm i.g{background:var(--good);color:#04200f} .hm i.r{background:var(--bad);color:#fff} .hm i.y{background:var(--gold);color:#2b1d00}
   .gfoot{flex:none;margin-top:clamp(6px,1vh,10px);text-align:center;font-size:clamp(10px,1.7vh,14px);color:var(--muted);line-height:1.5}
   .gfoot b{color:var(--text)} .gfoot .bad{color:var(--bad);font-weight:800}
   .lg{display:inline-block;width:.8em;height:.8em;border-radius:3px;vertical-align:-1px;margin:0 3px 0 8px}
@@ -208,7 +221,8 @@
   /* leaderboard */
   .lbpanel{min-height:0;display:flex;flex-direction:column;background:linear-gradient(180deg,#ffffff18,#ffffff0a);border:1px solid #ffffff2a;border-radius:22px;padding:clamp(10px,1.7vh,18px);box-shadow:0 12px 34px #0005}
   .lbpanel h3{color:var(--gold);justify-content:center}
-  .lbtabs{display:flex;gap:6px;justify-content:center;margin:0 0 8px;flex:none}
+  .lbtabs{display:flex;gap:6px;justify-content:center;margin:0 0 6px;flex:none;flex-wrap:wrap}
+  .lbtabs.lt{margin-bottom:8px}
   .lbtabs button{padding:3px 14px;border-radius:14px;background:#ffffff1a;font-weight:800;font-size:clamp(11px,1.8vh,14px)}
   .lbtabs button.sel{background:var(--gold);color:#241a00}
   .lbl-list{flex:1;min-height:0;overflow:auto;list-style:none;display:flex;flex-direction:column;gap:4px;padding-right:2px}
@@ -249,7 +263,12 @@
     font-weight:900;font-size:clamp(22px,5vh,48px);text-shadow:0 3px 8px #000;pointer-events:none;text-align:center}
   .panel.frozen .status{display:flex;background:#6fd3ff77;backdrop-filter:blur(3px)}
   .panel.frozen .ans{pointer-events:none}
-  .qbox.tri{font-size:clamp(20px,min(6vh,4.6vw),70px)}
+  /* question & answer text is shrunk by JS (fit) when it is too long for the box */
+  .qtxt,.ans .v{display:inline-block;white-space:nowrap}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-size:.78em;margin:0 .06em}
+  .frac>span:first-child{border-bottom:.09em solid currentColor;padding:0 .14em .05em}
+  .frac>span:last-child{padding-top:.05em}
+  .qtxt .eq{vertical-align:middle}
   .qbox.fog .qtxt{filter:blur(14px)}
   .ans.dis{opacity:.15;pointer-events:none}
   .banner{position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:15;background:#000c;border:2px solid var(--gold);
@@ -274,11 +293,13 @@
 <section id="setup" class="screen on">
   <div class="setup-card">
     <div>
-      <h1>🚀 Times Table <span>Rocket Race</span></h1>
-      <p class="tag">Answer fast, charge your hero's power, and win the race!</p>
-      <div class="steps"><span><b>1</b> Pick the right answer (1×1 to 12×12)</span><span><b>2</b> Keep a streak for bonus ×</span><span><b>3</b> Every 5 right answers charges your hero power</span></div>
+      <h1>🚀 Maths <span>Rocket Race</span></h1>
+      <p class="tag">Times tables and percentages. Answer fast, charge your hero's power, and win the race!</p>
+      <div class="steps"><span id="step1"></span><span><b>2</b> Keep a streak for bonus ×</span><span><b>3</b> Every 5 right answers charges your hero power</span></div>
     </div>
     <div class="cfg">
+      <div class="sgroup"><div class="lbl">Subject</div><div class="row" id="subjects"></div>
+        <div class="row submodes" id="pmodeGroup"><span class="subarrow">↳</span><div class="row" id="pmodes"></div></div></div>
       <div class="sgroup"><div class="lbl">Players</div><div class="row" id="pcount"></div></div>
       <div class="sgroup"><div class="lbl">Round length</div><div class="row" id="lens"></div></div>
     </div>
@@ -308,8 +329,8 @@
   <div class="rhead"><h2>🏁 Race Over!</h2><div id="winner"></div><div class="chips" id="rchips"></div></div>
   <div class="rbody">
     <section class="card rscore"><div class="ctitle"><span>🏅 Scoreboard</span></div><div class="rows" id="podium"></div></section>
-    <section class="card rmastery"><div class="ctitle"><span>🔢 Mastery</span><div class="pchips" id="pchips"></div></div>
-      <div class="gwrap"><div class="hm" id="hm"></div></div><div class="gfoot" id="gfoot"></div></section>
+    <section class="card rmastery"><div class="ctitle"><span>🎯 Mastery</span><div class="pchips" id="pchips"></div></div>
+      <div class="gwrap" id="gwrap"><div class="hm" id="hm"></div></div><div class="gfoot" id="gfoot"></div></section>
     <aside class="lbpanel" id="lbResults"></aside>
   </div>
   <div class="rbtns">
@@ -332,13 +353,12 @@ const COLORS = ["#ff5d73","#4dabf7","#ffd43b","#51cf66"];
 const KEYSETS = [["1","2","3","4"],["7","8","9","0"],["z","x","c","v"],["b","n","m",","]];
 const ROCKETS = ["🚀","🛸","🛰️","☄️"];
 const LENGTHS = [30,60,90];
-const MAX_F = 12;
 const ABIL_KEYS = ["5","-","a","."];
 const CHARGE_NEED = 5; // correct answers needed to charge the ability (golden counts double)
 // kind: "self" helps you, "attack" hits the leading opponent (needs 2+ players)
 const CHARS = [
   {id:"turbo", icon:"🤖", name:"Turbo Bot",  ab:"TURBO",  kind:"self",   desc:"Your next 5 correct answers score DOUBLE."},
-  {id:"owl",   icon:"🦉", name:"Wise Owl",   ab:"EASY",   kind:"self",   desc:"Your next 4 questions are EASY (small numbers) — quick points!"},
+  {id:"owl",   icon:"🦉", name:"Wise Owl",   ab:"EASY",   kind:"self",   desc:"Your next 4 questions are EASY: quick points!"},
   {id:"shield",icon:"🛡️", name:"Guardian",   ab:"SHIELD", kind:"self",   desc:"Blocks the next attack aimed at you, or saves your streak after your next mistake."},
   {id:"ice",   icon:"🧙", name:"Ice Wizard", ab:"FREEZE", kind:"attack", desc:"Freezes the leading opponent for 3 seconds."},
   {id:"alien", icon:"👽", name:"Fog Alien",  ab:"FOG",    kind:"attack", desc:"Blurs the leading opponent's question for 3 seconds."},
@@ -354,8 +374,129 @@ const store = {
 };
 
 /* ====================== SETTINGS ====================== */
-const settings = Object.assign({players:2,length:60,sound:true,names:["Player 1","Player 2","Player 3","Player 4"],chars:[0,3,1,5]}, store.get("ttrr",{}));
+const settings = Object.assign({mode:"mul",pctMode:"frac",players:2,length:60,sound:true,names:["Player 1","Player 2","Player 3","Player 4"],chars:[0,3,1,5]}, store.get("ttrr",{}));
 const saveSettings = () => store.set("ttrr",settings);
+
+/* ====================== CONTENT ====================== */
+// A "mode" = one kind of question. Multiplication has one mode; Percentages has two.
+const MODES = {
+  mul: {name:"Multiplication",              tab:"× tables", step:"Pick the right answer (1×1 to 12×12)", ranks:[130,250,380,520]},
+  frac:{name:"Percentages: fractions → %",  tab:"¾ → %",    big:"¾ → %",   sub:"fractions to %", step:"Turn the fraction into a percentage", ranks:[110,210,320,440]},
+  amt: {name:"Percentages: % of an amount", tab:"% of 80",  big:"% of 80", sub:"% of an amount", step:"Find the percentage of the amount",  ranks:[110,210,320,440]}
+};
+const MODE_IDS = Object.keys(MODES), PCT_MODES = ["frac","amt"];
+const SUBJECTS = [{id:"mul",big:"×",sub:"multiplication"},{id:"pct",big:"%",sub:"percentages"}];
+if(!MODES[settings.mode]) settings.mode="mul";
+if(!PCT_MODES.includes(settings.pctMode)) settings.pctMode="frac";
+
+/* --- Multiplication: times tables 1×1 … 12×12 --- */
+const MAX_F = 12;
+// Difficulty ramps gently: early questions use smaller factors, by ~20 correct all of 1..12 are in play.
+function mulSpec(lvl,p){
+  const easy=p.fx.easy>0;
+  const maxF = easy ? 5 : Math.min(MAX_F, 5 + Math.floor(p.correct/3));
+  let f;
+  if(!easy && p.correct>=6 && Math.random()<.15){
+    // three-number question: small factors only, product stays friendly
+    do{ f=[2+rnd(4),2+rnd(4),2+rnd(4)]; }while(f[0]*f[1]*f[2]>100);
+  } else {
+    let a=1+rnd(maxF), b=1+rnd(maxF);
+    if(!easy && maxF>=8 && Math.random()<.45){ if(Math.random()<.5) a=Math.max(a,6+rnd(7)); else b=Math.max(b,6+rnd(7)); }
+    if((a===1||b===1) && Math.random()<.7){ a=2+rnd(maxF-1>0?maxF-1:1); b=2+rnd(maxF-1>0?maxF-1:1); }
+    f=[Math.min(a,MAX_F),Math.min(b,MAX_F)];
+  }
+  return {key:[...f].sort((x,y)=>x-y).join("x"), f};
+}
+function buildMul(s){
+  const f=shuffle([...s.f]), ans=f.reduce((x,y)=>x*y,1), cand=[];
+  // distractors = neighbour facts (6×8, 7×7 for 6×7), near misses, digit swap
+  f.forEach((v,i)=>[1,-1,2].forEach(d=>{ if(v+d>0){ const g=[...f]; g[i]=v+d; cand.push(g.reduce((x,y)=>x*y,1)); } }));
+  cand.push(ans+10,ans-10,ans+f[0],ans-f[1],ans+1,ans-1,ans+2,ans-2);
+  const ds=String(ans); if(ds.length===2) cand.push(+(ds[1]+ds[0]));
+  const txt=f.join(" × ");
+  return {key:s.key, spec:s, html:txt, ans, opts:pickOpts(ans,shuffle(cand).filter(c=>c>0),k=>ans+k*3), explain:`${txt} = ${ans}`};
+}
+
+/* --- Percentages --- */
+// Mode 1 facts: [numerator, denominator, level], always in simplest form.
+const FRACS = [
+  [1,2,1],[1,4,1],[3,4,1],[1,5,1],[2,5,1],[3,5,1],[4,5,1],[1,10,1],[3,10,1],[7,10,1],[9,10,1],
+  [1,20,2],[3,20,2],[7,20,2],[9,20,2],[11,20,2],[17,20,2],[1,25,2],[3,25,2],[7,25,2],[1,50,2],[13,50,2],[1,100,2],
+  [1,8,3],[3,8,3],[5,8,3],[7,8,3],[1,3,3],[2,3,3],[5,4,3],[3,2,3],[6,5,3]
+];
+// Mode 2 facts: [percent, level, mental-maths shortcut]
+const PCTS = [
+  [50,1,"½"],[10,1,"÷10"],[25,1,"¼"],[100,1,"all of it"],
+  [20,2,"÷5"],[5,2,"10% ÷ 2"],[75,2,"¾"],[1,2,"÷100"],[30,2,"3 × 10%"],[40,2,"4 × 10%"],[60,2,"6 × 10%"],[70,2,"7 × 10%"],[80,2,"8 × 10%"],[90,2,"100% − 10%"],
+  [15,3,"10% + 5%"],[35,3,"25% + 10%"],[45,3,"50% − 5%"],[12.5,3,"÷8"],[2,3,"2 × 1%"],[65,3,"50% + 15%"],[95,3,"100% − 5%"],[150,3,"100% + 50%"],[200,3,"× 2"]
+];
+
+const gcd = (a,b) => b ? gcd(b,a%b) : a;
+const isNice = v => v>0 && Math.abs(v*10-Math.round(v*10))<1e-6;   // whole or one decimal place
+function fmtPct(v){
+  if(Math.abs(v-100/3)<1e-6) return "33⅓%";
+  if(Math.abs(v-200/3)<1e-6) return "66⅔%";
+  return (+v.toFixed(1))+"%";
+}
+const fracHTML = (n,d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+
+// Level 1 → 2 after 4 correct answers, level 3 after 8. Owl power forces level 1.
+const levelOf = p => p.fx.easy>0 ? 1 : Math.min(3, 1+Math.floor(p.correct/4));
+function pickLevel(bank,lvl,li){
+  const cur=bank.filter(x=>x[li]===lvl), old=bank.filter(x=>x[li]<lvl);
+  const pool=(!old.length||Math.random()<.6)?cur:old;     // mostly the newest level, sometimes revision
+  return pool[rnd(pool.length)];
+}
+
+/* --- Mode 1: fraction → percentage --- */
+function fracSpec(lvl){
+  const [n,d]=pickLevel(FRACS,lvl,2);
+  let k=1;   // from level 2, sometimes show an equivalent fraction (6/8 instead of 3/4)
+  if(lvl>=2 && Math.random()<.3){ const ks=[2,3,4,5].filter(m=>d*m<=60&&n*m<100); if(ks.length) k=ks[rnd(ks.length)]; }
+  return {key:n+"/"+d,n,d,k};
+}
+function buildFrac(s){
+  const {n,d,k}=s, N=n*k, D=d*k, P=100*n/d, ans=fmtPct(P);
+  // distractors = typical mistakes: "3/4 = 34%", numerator×10, complement, neighbour fractions, rounding…
+  const cand=[+(String(N)+String(D)), N*10, D*10, 100-P, P/2, P*2, 100*(n+1)/d, 100*(n-1)/d, 100*n/(d+1), 100*n/(d-1),
+              N, Math.floor(P), Math.ceil(P), P+10, P-10];
+  const opts=pickOpts(ans, shuffle(cand).filter(v=>isNice(v)&&v<=Math.max(200,P*2)).map(fmtPct), k2=>fmtPct(P+5*k2));
+  const how = k>1 ? `${N}/${D} = ${n}/${d} = ${ans}` : (100%d===0&&d!==100 ? `${n}/${d} = ${100*n/d}/100 = ${ans}` : `${n}/${d} = ${ans}`);
+  return {key:s.key, spec:s, html:fracHTML(N,D)+`<span class="eq">&nbsp;= ?</span>`, ans, opts, explain:how};
+}
+
+/* --- Mode 2: percentage of an amount --- */
+function amtSpec(lvl){
+  const [pct]=pickLevel(PCTS,lvl,1);
+  const t=Math.round(pct*10), step=1000/gcd(t,1000);       // amount must be a multiple of step for a whole-number answer
+  const max=Math.max([0,100,200,400][lvl], step*5);
+  let a, tries=0;
+  do{ a=step*(1+rnd(Math.floor(max/step))); tries++; }
+  while(tries<30 && (a<10 || (a===100&&Math.random()<.8)));  // 100 makes it too easy
+  return {key:"p"+pct,pct,a};
+}
+function buildAmt(s){
+  const {pct,a}=s, ans=a*pct/100, tip=PCTS.find(x=>x[0]===pct)[2];
+  // distractors = typical mistakes: the part left over, adding instead, decimal slips, neighbour %, dividing by the %
+  const cand=[a-ans, a+ans, ans*10, ans/10, ans*2, ans/2, a/pct, pct, a*(pct+10)/100, a*(pct-10)/100, a*(pct+5)/100, a*(pct-5)/100];
+  const opts=pickOpts(ans, shuffle(cand).filter(v=>v>0&&Number.isInteger(v)), k=>ans+k*(ans>=20?5:1));
+  return {key:s.key, spec:s, html:`${pct}% of ${a}`, ans, opts, explain:`${pct}% of ${a} = ${ans}  (${pct}% = ${tip})`};
+}
+
+// 4 unique options containing ans; fallback(k) gives extra wrong answers for k = 1, -1, 2, -2, …
+function pickOpts(ans,cands,fallback){
+  const opts=[ans];
+  for(const c of cands){ if(opts.length<4 && !opts.includes(c)) opts.push(c); }
+  for(let i=1;opts.length<4&&i<60;i++){ const c=fallback(i%2?(i+1)/2:-i/2); if(!opts.includes(c)&&parseFloat(c)>0) opts.push(c); }
+  return shuffle(opts);
+}
+
+// Facts shown on the results "mastery wall" for the current mode
+function factBank(mode){
+  return mode==="frac"
+    ? FRACS.map(([n,d,l])=>({key:n+"/"+d, lvl:l, label:n+"/"+d, sub:fmtPct(100*n/d), say:`${n}/${d} = ${fmtPct(100*n/d)}`}))
+    : PCTS.map(([p,l,tip])=>({key:"p"+p, lvl:l, label:p+"%", sub:tip, say:`${p}% = ${tip}`}));
+}
 
 /* ====================== AUDIO ====================== */
 let actx=null;
@@ -450,6 +591,21 @@ function closeAllKb(){ Object.keys(kbOpen).forEach(i=>closeKb(+i)); }
 
 /* ====================== SETUP SCREEN ====================== */
 function buildSetup(){
+  const isPct=settings.mode!=="mul";
+  const sj=$("subjects"); sj.innerHTML="";
+  SUBJECTS.forEach(sb=>{
+    const b=document.createElement("button"); b.className="opt"+((sb.id==="pct")===isPct?" sel":"");
+    b.innerHTML=`${sb.big}<small>${sb.sub}</small>`;
+    b.onclick=()=>{settings.mode=sb.id==="pct"?settings.pctMode:"mul";saveSettings();buildSetup();}; sj.appendChild(b);
+  });
+  $("pmodeGroup").style.display=isPct?"":"none";
+  const pm=$("pmodes"); pm.innerHTML="";
+  PCT_MODES.forEach(m=>{
+    const b=document.createElement("button"); b.className="opt"+(settings.mode===m?" sel":"");
+    b.innerHTML=`${MODES[m].big}<small>${MODES[m].sub}</small>`;
+    b.onclick=()=>{settings.mode=settings.pctMode=m;saveSettings();buildSetup();}; pm.appendChild(b);
+  });
+  $("step1").innerHTML=`<b>1</b> ${MODES[settings.mode].step}`;
   const pc=$("pcount"); pc.innerHTML="";
   for(let n=1;n<=4;n++){
     const b=document.createElement("button"); b.className="opt"+(settings.players===n?" sel":"");
@@ -502,38 +658,35 @@ function newPlayer(i){
 }
 
 /* ====================== QUESTIONS ====================== */
-// Difficulty ramps gently: early questions use smaller factors, by ~20 correct all of 1..12 are in play.
+const GEN = {mul:[mulSpec,buildMul], frac:[fracSpec,buildFrac], amt:[amtSpec,buildAmt]};
+// Missed facts come back 30% of the time; the same fact is never asked twice in a row.
 function makeQuestion(p){
-  const easy=p.fx.easy>0;
-  const maxF = easy ? 5 : Math.min(MAX_F, 5 + Math.floor(p.correct/3));
-  let f,key,tries=0;
+  const lvl=levelOf(p), [spec,build]=GEN[settings.mode];
+  let s, tries=0;
   do{
-    if(!easy && p.missed.length && Math.random()<.3){ f=p.missed.shift(); }
-    else if(!easy && p.correct>=6 && Math.random()<.15){
-      // three-number question: small factors only, product stays friendly
-      do{ f=[2+rnd(4),2+rnd(4),2+rnd(4)]; }while(f[0]*f[1]*f[2]>100);
-    } else {
-      let a=1+rnd(maxF), b=1+rnd(maxF);
-      if(!easy && maxF>=8 && Math.random()<.45){ if(Math.random()<.5) a=Math.max(a,6+rnd(7)); else b=Math.max(b,6+rnd(7)); }
-      if((a===1||b===1) && Math.random()<.7){ a=2+rnd(maxF-1>0?maxF-1:1); b=2+rnd(maxF-1>0?maxF-1:1); }
-      f=[Math.min(a,MAX_F),Math.min(b,MAX_F)];
+    s=null;
+    if(p.fx.easy<=0 && p.missed.length && Math.random()<.3){
+      s=p.missed.shift();
+      if(s.key===p.last){ p.missed.push(s); s=null; }
     }
-    key=[...f].sort((x,y)=>x-y).join("x"); tries++;
-  } while(key===p.last && tries<10);
-  p.last=key;
-  shuffle(f);
-  const ans=f.reduce((x,y)=>x*y,1), set=new Set([ans]), cand=[];
-  f.forEach((v,i)=>[1,-1,2].forEach(d=>{ if(v+d>0){ const g=[...f]; g[i]=v+d; cand.push(g.reduce((x,y)=>x*y,1)); } }));
-  cand.push(ans+10,ans-10,ans+f[0],ans-f[1],ans+1,ans-1,ans+2,ans-2);
-  const ds=String(ans); if(ds.length===2) cand.push(+(ds[1]+ds[0]));
-  shuffle(cand);
-  const opts=[ans];
-  for(const c of cand){ if(c>0 && !set.has(c) && opts.length<4){ set.add(c); opts.push(c); } }
-  for(let k=1;opts.length<4;k++){ const c=ans+k*3; if(!set.has(c)){set.add(c);opts.push(c);} }
-  shuffle(opts);
-  const golden = p.streak>=3 && Date.now()>goldenCooldown && Math.random()<.18;
-  return {f,txt:f.join(" × "),ans,opts,key,golden};
+    if(!s) s=spec(lvl,p);
+    tries++;
+  } while(s.key===p.last && tries<10);
+  p.last=s.key;
+  const q = build(s);
+  q.golden = p.streak>=3 && Date.now()>goldenCooldown && Math.random()<.18;
+  return q;
 }
+
+// Shrink text that does not fit its box (long questions, stacked fractions, "12.5%" answers…)
+function fit(el){
+  el.style.fontSize="";
+  const box=el.parentElement, r=el.getBoundingClientRect();
+  if(!r.width||!box.clientWidth) return;
+  const s=Math.min(1, box.clientWidth*.88/r.width, box.clientHeight*.86/r.height);
+  if(s<1) el.style.fontSize=(parseFloat(getComputedStyle(el).fontSize)*s)+"px";
+}
+const fitPanel = p => { if(!p.q) return; fit(p.el.qtxt); p.el.ans.forEach(b=>fit(b.querySelector(".v"))); };
 
 /* ====================== PANELS ====================== */
 function buildArena(){
@@ -577,9 +730,10 @@ function nextQuestion(p){
   p.q=makeQuestion(p); p.locked=false; p.qStart=performance.now();
   const q=p.q, e=p.el;
   e.panel.classList.remove("lock");
-  e.qtxt.textContent=q.txt;
-  e.qbox.className="qbox"+(q.golden?" golden":"")+(q.f.length>2?" tri":"")+(p.fx.fog>0?" fog":"");
+  e.qtxt.innerHTML=q.html;
+  e.qbox.className="qbox"+(q.golden?" golden":"")+(p.fx.fog>0?" fog":"");
   e.ans.forEach((b,k)=>{ b.className="ans"; b.querySelector(".v").textContent=q.opts[k]; });
+  fitPanel(p);
   if(q.golden) goldenCooldown=Date.now()+4000;
   e.qbox.classList.toggle("fog",p.fx.fog>0);
   if(p.fx.easy>0){ p.fx.easy--; renderAbility(p); }
@@ -660,11 +814,11 @@ function answer(p,k){
   } else {
     p.wrong++; h.w++;
     if(p.fx.shield){ p.fx.shield=false; banner(`🛡️ ${p.name}'s shield saved the streak!`,p.color); } else p.streak=0;
-    if(!p.missed.some(x=>[...x].sort().join()===[...q.f].sort().join())) p.missed.push([...q.f]);
+    if(!p.missed.some(s=>s.key===q.key)) p.missed.push(q.spec);
     e.ans[k].classList.add("wrong");
     e.ans[q.opts.indexOf(q.ans)].classList.add("right");
     e.qbox.classList.remove("golden"); e.qbox.classList.add("no");
-    e.fb.className="fb bad"; e.fb.textContent=`${q.txt} = ${q.ans}  — you'll get it next time!`;
+    e.fb.className="fb bad"; e.fb.textContent=`${q.explain}. You'll get it next time!`;
     sfx.bad(); updatePanel(p,false); renderAbility(p);
     setTimeout(()=>{ if(phase==="play") nextQuestion(p); },900);
   }
@@ -695,7 +849,7 @@ function startGame(){
   timeLeft=settings.length; renderTimer();
   phase="countdown";
   const ov=$("overlay"), bc=$("bigcount"), ot=$("overtxt");
-  ot.innerHTML=settings.players>1?"Get ready… race to the top!":"Get ready… beat your best score!";
+  ot.innerHTML=`<b>${MODES[settings.mode].name}</b><br>`+(settings.players>1?"Get ready… race to the top!":"Get ready… beat your best score!");
   ov.classList.add("on");
   let n=3;
   const step=()=>{
@@ -736,65 +890,86 @@ function setPaused(v){
 function endGame(){
   phase="results"; clearInterval(timerId); document.body.classList.remove("low");
   $("overlay").classList.remove("on");
-  const hl=saveScores(); buildResults(); renderBoard($("lbResults"),settings.length,hl); show("results"); sfx.win(); confetti();
+  const hl=saveScores(); buildResults(); renderBoard($("lbResults"),{len:settings.length,mode:settings.mode,hl}); show("results"); layoutChips(); sfx.win(); confetti();
   setTimeout(()=>$("againBtn").focus(),50);
 }
 
-/* ====================== LEADERBOARD (saved in this browser) ====================== */
+/* ====================== LEADERBOARD (saved in this browser, per mode & round length) ====================== */
 const LB_KEY="ttrr_leaderboard", LB_KEEP=50, LB_SHOW=10;
 const loadLB = () => { const v=store.get(LB_KEY,[]); return Array.isArray(v)?v:[]; };
 function saveScores(){
   const now=Date.now(), batch=now+"-"+rnd(1e6);
   let all=loadLB();
-  players.forEach(p=>all.push({id:batch+"-"+p.i,n:p.name,i:p.ch.icon,s:p.score,p:players.length,l:settings.length,t:now}));
-  // keep the best LB_KEEP scores for each round length
+  players.forEach(p=>all.push({id:batch+"-"+p.i,n:p.name,i:p.ch.icon,s:p.score,p:players.length,l:settings.length,m:settings.mode,t:now}));
+  // keep the best LB_KEEP scores for each mode + round length
   const out=[];
-  LENGTHS.forEach(len=>out.push(...all.filter(e=>e.l===len).sort((a,b)=>b.s-a.s||a.t-b.t).slice(0,LB_KEEP)));
+  MODE_IDS.forEach(m=>LENGTHS.forEach(len=>out.push(...all.filter(e=>(e.m||"mul")===m&&e.l===len).sort((a,b)=>b.s-a.s||a.t-b.t).slice(0,LB_KEEP))));
   store.set(LB_KEY,out);
   return new Set(players.map(p=>batch+"-"+p.i));
 }
 const fmtDate = t => new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
-function renderBoard(el,len,hl,opts={}){
-  const rows=loadLB().filter(e=>e.l===len).sort((a,b)=>b.s-a.s||a.t-b.t).slice(0,LB_SHOW);
+// st = {len, mode, hl (Set of entry ids to highlight), modal}
+function renderBoard(el,st){
+  const rows=loadLB().filter(e=>e.l===st.len&&(e.m||"mul")===st.mode).sort((a,b)=>b.s-a.s||a.t-b.t).slice(0,LB_SHOW);
   const medals=["🥇","🥈","🥉"];
-  el.innerHTML=`<h3>🏆 Leaderboard</h3><div class="lbtabs"></div><ol class="lbl-list"></ol>`;
-  const tabs=el.querySelector(".lbtabs");
-  LENGTHS.forEach(l=>{ const b=document.createElement("button"); b.textContent=l+"s"; if(l===len) b.className="sel";
-    b.onclick=()=>renderBoard(el,l,hl,opts); tabs.appendChild(b); });
+  el.innerHTML=`<h3>🏆 Leaderboard</h3><div class="lbtabs mt"></div><div class="lbtabs lt"></div><ol class="lbl-list"></ol>`;
+  const tab=(box,label,sel,next)=>{ const b=document.createElement("button"); b.textContent=label; if(sel) b.className="sel";
+    b.onclick=()=>renderBoard(el,{...st,...next}); el.querySelector(box).appendChild(b); };
+  MODE_IDS.forEach(m=>tab(".mt",MODES[m].tab,m===st.mode,{mode:m}));
+  LENGTHS.forEach(l=>tab(".lt",l+"s",l===st.len,{len:l}));
   const ol=el.querySelector("ol");
-  if(!rows.length){ ol.innerHTML=`<div class="lbempty">No scores for ${len}s rounds yet.<br>Play a game to be the first! 🚀</div>`; }
+  if(!rows.length){ ol.innerHTML=`<div class="lbempty">No “${MODES[st.mode].name}” scores for ${st.len}s rounds yet.<br>Play a game to be the first! 🚀</div>`; }
   rows.forEach((e,k)=>{
-    const li=document.createElement("li"); if(hl&&hl.has(e.id)) li.className="me";
+    const li=document.createElement("li"); if(st.hl&&st.hl.has(e.id)) li.className="me";
     li.innerHTML=`<span class="rk2">${medals[k]||k+1}</span><span class="nm"></span><span class="sc">${e.s}</span><span class="dt">${fmtDate(e.t)}</span>`;
     li.querySelector(".nm").textContent=e.i+" "+e.n+(e.p>1?" ("+e.p+"P)":"");
     ol.appendChild(li);
   });
-  if(opts.modal){
+  if(st.modal){
     const f=document.createElement("div"); f.className="lbfoot";
     f.innerHTML=`<button class="close">Close</button>${rows.length?'<button class="danger clear">Clear scores</button>':""}`;
     f.querySelector(".close").onclick=closeBoard;
     const c=f.querySelector(".clear");
-    if(c) c.onclick=()=>{ if(confirm("Delete ALL saved scores on this device?")){ store.set(LB_KEY,[]); renderBoard(el,len,hl,opts); } };
+    if(c) c.onclick=()=>{ if(confirm("Delete ALL saved scores on this device?")){ store.set(LB_KEY,[]); renderBoard(el,st); } };
     el.appendChild(f);
   }
 }
-function openBoard(){ $("lbModal").classList.add("on"); renderBoard($("lbModalBox"),settings.length,null,{modal:true}); }
+function openBoard(){ $("lbModal").classList.add("on"); renderBoard($("lbModalBox"),{len:settings.length,mode:settings.mode,modal:true}); }
 function closeBoard(){ $("lbModal").classList.remove("on"); }
 
 /* ====================== RESULTS ====================== */
 function titleFor(score){
   const s=score/(settings.length/60);
-  return s>=520?"🌟 Galaxy Legend": s>=380?"🏅 Commander": s>=250?"🎖 Captain": s>=130?"🧑‍🚀 Pilot":"🔰 Cadet";
+  const [pilot,captain,commander,legend]=MODES[settings.mode].ranks;   // points per minute
+  return s>=legend?"🌟 Galaxy Legend": s>=commander?"🏅 Commander": s>=captain?"🎖 Captain": s>=pilot?"🧑‍🚀 Pilot":"🔰 Cadet";
+}
+// Pick the column count that gives the biggest chips that still fit the mastery card
+function layoutChips(){
+  const wrap=$("gwrap"), g=$("hm"), N=g.classList.contains("wall")?g.children.length:0, W=wrap.clientWidth, H=wrap.clientHeight, gap=4;
+  if(!N||!W||!H) return;
+  let cols=1, size=0;
+  for(let c=1;c<=N;c++){
+    const r=Math.ceil(N/c), cw=(W-(c-1)*gap)/c, chh=(H-(r-1)*gap)/r, s=Math.min(cw/1.35,chh);
+    if(s>size){ size=s; cols=c; }
+  }
+  const h=Math.floor(Math.min(size,80));
+  g.style.gridTemplateColumns=`repeat(${cols},minmax(0,${Math.floor(h*1.6)}px))`;
+  g.style.gridAutoRows=h+"px"; g.style.justifyContent="center";
+  g.style.fontSize=Math.max(9,Math.min(h*.36,24))+"px";
+}
+function masteryFoot(tried,total,nailed,tricky,missed,practice){
+  $("gfoot").innerHTML=`<div><b>${tried}</b> of ${total} facts tried<span class="lg" style="background:var(--good)"></span>${nailed}<span class="lg" style="background:var(--gold)"></span>${tricky}<span class="lg" style="background:var(--bad)"></span>${missed}</div>
+    <div>${practice?'Practice: <span class="bad">'+practice+"</span>":"🎉 No mistakes, perfect!"}</div>`;
 }
 function buildResults(){
   const ranked=[...players].sort((a,b)=>b.score-a.score);
   const topScore=ranked[0].score, winners=ranked.filter(p=>p.score===topScore);
   $("winner").textContent = players.length===1 ? `Great flying, ${players[0].name}!` :
     winners.length>1 ? "🤝 Tie: "+winners.map(w=>w.name).join(" & ") : `🏆 ${ranked[0].name} wins!`;
-  $("rchips").innerHTML=`<span>${players.length} player${players.length>1?"s":""}</span><span>${settings.length}s round</span>`;
+  $("rchips").innerHTML=`<span>${MODES[settings.mode].name}</span><span>${players.length} player${players.length>1?"s":""}</span><span>${settings.length}s round</span>`;
   const pod=$("podium"); pod.innerHTML=""; pod.className="rows n"+players.length;
   const medals=["🥇","🥈","🥉","4️⃣"];
-  const bestKey=`best_${players.length}p_${settings.length}`;
+  const bestKey=(settings.mode==="mul"?"best_":`best_${settings.mode}_`)+`${players.length}p_${settings.length}`;
   const prevBest=store.get(bestKey,0);
   const rowEls=new Map();
   ranked.forEach((p,pos)=>{
@@ -803,7 +978,7 @@ function buildResults(){
     const avg=p.correct?(p.timeSum/p.correct).toFixed(1)+"s":"–";
     const isBest=p.score>prevBest && p.score>0;
     const r=document.createElement("div"); r.className="prow"+(rank===0&&players.length>1?" first":""); r.style.setProperty("--c",p.color);
-    r.style.animationDelay=(pos*.1)+"s"; r.title="Show "+p.name+"'s times-table diagram";
+    r.style.animationDelay=(pos*.1)+"s"; r.title="Show "+p.name+"'s mastery chart";
     r.innerHTML=`
       <div class="ptop">
         <div class="rk">${players.length>1?medals[rank]:"🏁"}</div>
@@ -828,22 +1003,35 @@ function buildResults(){
     if(players.length>1) players.forEach(q=>{ const b=document.createElement("button"); b.className="pc"+(q===p?" sel":""); b.style.setProperty("--c",q.color);
       b.textContent=q.ch.icon+" "+q.name; b.onclick=()=>showMastery(q); pc.appendChild(b); });
     else { const t=document.createElement("span"); t.style.color=p.color; t.textContent=p.ch.icon+" "+p.name; pc.appendChild(t); }
-    // green = always right, yellow = tricky, red = missed, grey = not tried
-    let cells='<i class="ax"></i>';
-    for(let b=1;b<=12;b++) cells+=`<i class="ax">${b}</i>`;
-    for(let a=1;a<=12;a++){
-      cells+=`<i class="ax">${a}</i>`;
-      for(let b=1;b<=12;b++){
-        const h=p.hist[Math.min(a,b)+"x"+Math.max(a,b)];
-        cells+=`<i class="${!h?"":h.w&&!h.r?"r":h.w?"y":"g"}">${h?a*b:""}</i>`;
+    const g=$("hm"); g.style.cssText="";
+    if(settings.mode==="mul"){
+      // 12×12 grid: green = always right, yellow = tricky, red = missed, grey = not tried
+      g.className="hm tt";
+      let cells='<i class="ax"></i>';
+      for(let b=1;b<=12;b++) cells+=`<i class="ax">${b}</i>`;
+      for(let a=1;a<=12;a++){
+        cells+=`<i class="ax">${a}</i>`;
+        for(let b=1;b<=12;b++){
+          const h=p.hist[Math.min(a,b)+"x"+Math.max(a,b)];
+          cells+=`<i class="${!h?"":h.w&&!h.r?"r":h.w?"y":"g"}">${h?a*b:""}</i>`;
+        }
       }
+      g.innerHTML=cells;
+      const pairs=Object.entries(p.hist).filter(([k])=>k.split("x").length===2);
+      const nailed=pairs.filter(([,h])=>!h.w).length, tricky=pairs.filter(([,h])=>h.w&&h.r).length, missed=pairs.filter(([,h])=>h.w&&!h.r).length;
+      const miss=[...new Set(Object.entries(p.hist).filter(([,h])=>h.w).map(([k])=>k.split("x").join("×")))];
+      masteryFoot(pairs.length,78,nailed,tricky,missed,miss.slice(0,5).join(", "));
+    } else {
+      // one chip per fact, easiest first, same colours
+      g.className="hm wall";
+      const bank=factBank(settings.mode);
+      g.innerHTML=bank.map(f=>{ const h=p.hist[f.key], c=!h?"":h.w&&!h.r?"r":h.w?"y":"g";
+        return `<i class="lv${f.lvl} ${c}" title="${f.say}">${f.label}<small>${f.sub}</small></i>`; }).join("");
+      const seen=bank.filter(f=>p.hist[f.key]).map(f=>[f,p.hist[f.key]]);
+      const nailed=seen.filter(([,h])=>!h.w).length, tricky=seen.filter(([,h])=>h.w&&h.r).length, missed=seen.filter(([,h])=>h.w&&!h.r).length;
+      masteryFoot(seen.length,bank.length,nailed,tricky,missed,seen.filter(([,h])=>h.w).map(([f])=>f.say).slice(0,4).join(" · "));
     }
-    $("hm").innerHTML=cells;
-    const pairs=Object.entries(p.hist).filter(([k])=>k.split("x").length===2);
-    const nailed=pairs.filter(([,h])=>!h.w).length, tricky=pairs.filter(([,h])=>h.w&&h.r).length, missed=pairs.filter(([,h])=>h.w&&!h.r).length;
-    const miss=[...new Set(Object.entries(p.hist).filter(([,h])=>h.w).map(([k])=>k.split("x").join("×")))];
-    $("gfoot").innerHTML=`<div><b>${pairs.length}</b> of 78 facts tried<span class="lg" style="background:var(--good)"></span>${nailed}<span class="lg" style="background:var(--gold)"></span>${tricky}<span class="lg" style="background:var(--bad)"></span>${missed}</div>
-      <div>${miss.length?'Practice: <span class="bad">'+miss.slice(0,5).join(", ")+"</span>":"🎉 No mistakes — perfect!"}</div>`;
+    layoutChips();
   }
   showMastery(ranked[0]);
   const top=Math.max(...players.map(p=>p.score));
@@ -883,7 +1071,7 @@ $("pauseBtn").onclick=e=>{ e.stopPropagation(); setPaused(!paused); };
 $("muteBtn").textContent=settings.sound?"🔊":"🔇";
 $("muteBtn").onclick=()=>{ settings.sound=!settings.sound; saveSettings(); $("muteBtn").textContent=settings.sound?"🔊":"🔇"; if(settings.sound) sfx.beep(); };
 addEventListener("blur",()=>{ if(phase==="play"&&!paused) setPaused(true); });
-addEventListener("resize",()=>{ if(phase==="play") players.forEach(p=>updatePanel(p,false)); });
+addEventListener("resize",()=>{ if(phase==="play") players.forEach(p=>{ updatePanel(p,false); fitPanel(p); }); if(phase==="results") layoutChips(); });
 
 buildSetup();
 })();
